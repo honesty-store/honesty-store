@@ -68,7 +68,7 @@ const createAccount = async ({ accountId }) => {
     return account;
 };
 
-const createTransaction = async ({ accountId, type, amount, data }) => {
+const createTransaction = async ({ accountId, type, amount, data }): Promise<Transaction> => {
     assertValidAccountId(accountId);
 
     const originalAccount = await get({ accountId });
@@ -116,7 +116,7 @@ const createTransaction = async ({ accountId, type, amount, data }) => {
         })
         .promise();
 
-    return updatedAccount;
+    return transaction;
 };
 
 const app = express();
@@ -140,8 +140,8 @@ router.post('/:accountId', (req, res) => {
     const { accountId } = req.params;
     const { type, amount, data } = req.body;
     createTransaction({ accountId, type, amount, data })
-        .then((account) => {
-            res.json({ response: account });
+        .then((transaction: Transaction) => {
+            res.json({ response: transaction });
         })
         .catch(({ message }) => {
             res.json({ error: { message } });
