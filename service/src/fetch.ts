@@ -1,7 +1,8 @@
 import fetch from 'node-fetch';
 import { baseUrl } from './baseUrl';
 import { Key } from './key';
-import { info } from './log';
+import { info, error } from './log';
+import { signServiceSecret } from './serviceSecret';
 
 interface ApiResponse<T> {
     response?: T;
@@ -9,56 +10,67 @@ interface ApiResponse<T> {
 }
 
 export default (service: string) => {
+    const fetchAndParse = async <Result>({ method, version, path, key, headers = {}, body = undefined }): Promise<Result> => {
+        const url = `${baseUrl}/${service}/v${version}${path}`;
+
+        info(key, `send ${method} ${url}`);
+
+        const fetchOptions = {
+            method,
+            headers: {
+                'content-type': body ? 'application/json' : undefined,
+                'service-secret': signServiceSecret(),
+                key: JSON.stringify(key),
+            },
+            body: body ? JSON.stringify(body) : undefined,
+        };
+
+        const response = await fetch(url, fetchOptions);
+
+        let json: ApiResponse<Result>;
+        try {
+            json = await response.json();
+        } catch (e) {
+            error(key, `failed ${method} ${url} couldn't parse json, HTTP ${response.status}`);
+            throw new Error(`${method} ${path} failed (couldn't parse json), HTTP ${response.status}`);
+        }
+
+        if (json.error) {
+            error(key, `error ${method} ${url} ${json.error.message}`);
+            throw new Error(json.error.message);
+        }
+
+        info(key, `success ${method} ${url}`);
+        return json.response;
+    };
 
     const get = async <Result>(version: number, key: Key, path: String) => {
-        const url = `${baseUrl}/${service}/v${version}${path}`;
-        info(key, `send GET ${url}`);
-        const response = await fetch(url, {
-            headers: {
-                key: JSON.stringify(key),
-            }
-        })
-            .then<ApiResponse<Result>>(response => response.json());
-        if (response.error) {
-            throw new Error(response.error.message);
-        }
-        return response.response;
+        return await fetchAndParse<Result>({
+            method: 'GET',
+            version,
+            path,
+            key,
+        });
     };
 
     const post = async <Result>(version: number, key: Key, path: String, body: any): Promise<Result> => {
-        const url = `${baseUrl}/${service}/v${version}${path}`;
-        info(key, `send POST ${url}`);
-        const response = await fetch(url, {
+        return await fetchAndParse<Result>({
             method: 'POST',
-            headers: {
-                'content-type': 'application/json',
-                key: JSON.stringify(key),
-            },
-            body: JSON.stringify(body)
-        })
-            .then<ApiResponse<Result>>(response => response.json());
-        if (response.error) {
-            throw new Error(response.error.message);
-        }
-        return response.response;
+            version,
+            path,
+            key,
+            body,
+        });
     };
 
     const put = async <Result>(version: number, key: Key, path: String, body: any): Promise<Result> => {
-        const url = `${baseUrl}/${service}/v${version}${path}`;
-        info(key, `send PUT ${url}`);
-        const response = await fetch(url, {
+        return await fetchAndParse<Result>({
             method: 'PUT',
-            headers: {
-                'content-type': 'application/json',
-                key: JSON.stringify(key),
-            },
-            body: JSON.stringify(body)
-        })
-            .then<ApiResponse<Result>>(response => response.json());
-        if (response.error) {
-            throw new Error(response.error.message);
-        }
-        return response.response;
+            version,
+            path,
+            key,
+            body,
+        });
     };
 
     return {

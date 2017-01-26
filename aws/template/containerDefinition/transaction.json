@@ -22,6 +22,10 @@
             {
                 "name": "BASE_URL",
                 "value": "${baseUrl}"
+            },
+            {
+                "name": "SERVICE_TOKEN_SECRET",
+                "value": "${serviceSecret}"
             }
         ],
         "logConfiguration": {

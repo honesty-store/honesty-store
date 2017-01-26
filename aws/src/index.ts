@@ -30,9 +30,18 @@ const warnAndExit = e => {
   process.exit(1);
 };
 
-program.command('deploy <branch> [dirs...]')
-  .action((branch, dirs) => {
-    deploy({ branch, dirs })
+program.command('deploy <branch> <live-service-secret> <live-user-secret> [dirs...]')
+  .action((branch, liveServiceSecret, liveUserSecret, dirs) => {
+    const deployOptions = {
+        branch,
+        dirs,
+        secrets: {
+            service: liveServiceSecret,
+            user: liveUserSecret,
+        },
+    };
+
+    deploy(deployOptions)
       .catch(warnAndExit);
   });
 
