@@ -46,9 +46,7 @@ const ErrorPrivate = ({
 
 const sentenceCase = str => (str || '').replace(/^[a-z]/, character => character.toUpperCase());
 
-const mapErrorStateToProps = ({ error }) => {
-    return { errorMessage: sentenceCase(error) }
-};
+const mapErrorStateToProps = ({ error }) => ({ errorMessage: sentenceCase(error) });
 
 export const Error = connect(mapErrorStateToProps)(ErrorPrivate);
 
