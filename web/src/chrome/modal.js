@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import Page from './page';
 import { MUTED_TEXT } from './colors';
@@ -29,18 +30,25 @@ const Modal = ({
         </div>
     </Page>;
 
-export const Error = ({
+const ErrorPrivate = ({
     title = 'Can you try that again, please?',
     subtitle = 'Oops! Something went wrong...',
     image = error,
+    errorMessage,
     onClick = () => browserHistory.goBack(),
     ...other
 }) =>
     <Modal title={title}
-        subtitle={subtitle}
+        subtitle={errorMessage || subtitle}
         image={image}
         onClick={onClick}
         {...other} />;
+
+const mapErrorStateToProps = ({ error }) => {
+  return { errorMessage: error }
+};
+
+export const Error = connect(mapErrorStateToProps)(ErrorPrivate);
 
 export const Success = ({
     title = '',
