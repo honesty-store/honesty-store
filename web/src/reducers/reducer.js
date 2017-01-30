@@ -18,6 +18,7 @@ const getInitialState = () => {
     },
     store: {},
     register: {},
+    error: undefined, // string
     accessToken: null,
     refreshToken: localStorage.refreshToken
   };
@@ -191,8 +192,10 @@ export default (state = getInitialState(), action) => {
       };
     }
     case TOPUP_FAILURE: {
+      const { error } = action;
       return {
         ...state,
+        error,
         pending: state.pending.filter(e => e !== 'topup')
       };
     }
