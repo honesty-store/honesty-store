@@ -1,5 +1,6 @@
 import { ELBv2 } from 'aws-sdk';
 import * as winston from 'winston';
+import { describeAll } from '../describe';
 
 export const ensureLoadBalancer = async ({ name }) => {
   const loadBalancerResponse = await new ELBv2({ apiVersion: '2015-12-01' })
@@ -27,13 +28,14 @@ export const ensureLoadBalancer = async ({ name }) => {
 export const pruneLoadBalancers = async ({ filter = (_loadBalancer: ELBv2.LoadBalancer) => false }) => {
   const elbv2 = new ELBv2({ apiVersion: '2015-12-01' });
 
-  const describeResponse = await elbv2.describeLoadBalancers({})
-    .promise();
+  const loadBalancers = await describeAll(
+    (Marker) => elbv2.describeLoadBalancers({ Marker }),
+    (response) => response.LoadBalancers
+  );
 
-  winston.debug('loadBalancer: loadBalancers', describeResponse.LoadBalancers);
+  winston.debug(`loadBalancer: loadBalancers`, loadBalancers);
 
-  const loadBalancersToPrune = describeResponse.LoadBalancers
-    .filter(filter);
+  const loadBalancersToPrune = loadBalancers.filter(filter);
 
   winston.debug('loadBalancer: loadBalancersToPrune', loadBalancersToPrune);
 
