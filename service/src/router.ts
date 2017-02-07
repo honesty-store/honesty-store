@@ -1,6 +1,7 @@
 import HTTPStatus = require('http-status');
 import express = require('express');
 
+import { UserErrorCode } from './errorMap';
 import { createServiceKey, Key } from './key';
 import { error, info } from './log';
 import { verifyServiceSecret } from './serviceSecret';
@@ -66,6 +67,25 @@ export const serviceAuthentication = (request, response, next) => {
   next();
 };
 
+const populateErrorResponse = (e, errorResponse) => {
+  if (e.nestedException) {
+    // 'e' is a ServiceRouterCode with a nested exception we should also expand.
+    // Done first as outer errors override it.
+    populateErrorResponse(e.nestedException, errorResponse);
+  }
+
+  if (e.statusCode) {
+    // 'e' is a ServiceRouterCode with a statusCode we should pass back
+    errorResponse.statusCode = e.statusCode;
+  }
+
+  // 'e' may be a UserErrorCode:
+  if (e.userErrorCode) {
+    errorResponse.userErrorCode = e.userErrorCode;
+  }
+};
+
+
 const createEndPoint = (service, internalRouter, version, method: 'get' | 'post' | 'put') =>
   <Body, Result>(path, authentication: ExpressAuthentication, action: BodyAction<Body, Result>) => {
     internalRouter[method](
@@ -86,8 +106,21 @@ const createEndPoint = (service, internalRouter, version, method: 'get' | 'post'
           .catch((e) => {
             const duration = timer();
             error(key, `failed ${method} ${request.url}`, { e, duration });
-            response.status(e.statusCode || 200) // e.statusCode because 'e' may be a ServiceRouterCode
-              .json({ error: { message: e.message }});
+
+            const errorResponse = {
+              statusCode: 200,
+              message: e.message,
+              userErrorCode: undefined
+            };
+            populateErrorResponse(e, errorResponse);
+
+            response.status(errorResponse.statusCode)
+              .json({
+                error: {
+                  message: errorResponse.message,
+                  userErrorCode: errorResponse.userErrorCode
+                }
+              });
           });
       });
   };
