@@ -28,7 +28,7 @@ export default (router) => {
       try {
         return await getPagedTransactions({ key, accountID: user.accountId, page });
       } catch (e) {
-        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e.message);
+        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e);
       }
     });
 };

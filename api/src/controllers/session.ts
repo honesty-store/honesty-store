@@ -11,7 +11,7 @@ export default (router) => {
       try {
         return await getSessionData(key, { user });
       } catch (e) {
-        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e.message);
+        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e);
       }
     });
 };

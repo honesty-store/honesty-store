@@ -18,7 +18,7 @@ export default (router) => {
             accountId: user.accountId
           });
       } catch (e) {
-        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e.message);
+        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e);
       }
     });
 };

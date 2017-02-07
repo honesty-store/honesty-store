@@ -27,8 +27,11 @@ interface Router {
 
 export class ServiceRouterCode extends Error {
   public statusCode: number;
-  constructor(statusCode: number, message: string) {
-    super(message);
+  public nestedException: Error;
+
+  constructor(statusCode: number, nestedException: Error) {
+    super(nestedException.message);
+    this.nestedException = nestedException;
     this.statusCode = statusCode;
   }
 }

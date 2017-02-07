@@ -65,7 +65,7 @@ const setupRegisterPhase1 = (router) => {
       try {
         return await register(key, storeCode);
       } catch (e) {
-        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e.message);
+        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e);
       }
     });
 };
@@ -78,13 +78,13 @@ const setupRegisterPhase2 = (router) => {
       if (!isEmail(emailAddress)) {
         throw new ServiceRouterCode(
           HTTPStatus.UNAUTHORIZED,
-          'Invalid email address provided');
+          new Error('Invalid email address provided'));
       }
 
       try {
         return await register2(key, { userID, emailAddress, topUpAmount, itemID, stripeToken });
       } catch (e) {
-        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e.message);
+        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e);
       }
     });
 };
