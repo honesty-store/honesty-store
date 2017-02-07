@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import { performTemplate } from './template';
 
 export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
@@ -23,25 +24,14 @@ const logoutFailure = () => {
   };
 };
 
-export const performLogout = () => async (dispatch, getState) => {
-  dispatch(logoutRequest());
-  try {
-    const { accessToken } = getState();
-    const response = await fetch('/api/v1/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer: ${accessToken}`
-      }
-    });
-    const json = await response.json();
-    if (json.error) {
-      throw new Error(json.error.message);
-    }
-    dispatch(logoutSuccess(json.response));
-    browserHistory.push(`/`);
-  }
-  catch (e) {
-    dispatch(logoutFailure());
-  }
-};
+export const performLogout = () =>
+  performTemplate({
+    url: '/api/v1/logout',
+    requestDispatch: logoutRequest,
+    successDispatch: logoutSuccess,
+    failureDispatch: logoutFailure,
+    createBody: undefined,
+    withAccessToken: true,
+    onSuccess: () => browserHistory.push(`/`),
+    onFailure: () => void 0,
+  });

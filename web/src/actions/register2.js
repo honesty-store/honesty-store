@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import { performTemplate } from './template';
 
 const createToken = (data) =>
     new Promise((resolve, reject) => {
@@ -58,30 +59,26 @@ const createStripeToken = ({ number, cvc, exp }) => {
   return createToken({ number, cvc, exp });
 };
 
-export const performRegister2 = ({ itemID, topUpAmount, emailAddress, cardDetails }) => async (dispatch, getState) => {
-  dispatch(register2Request());
-  try {
-    const stripeToken = await createStripeToken(cardDetails);
-    const accessToken = getState().accessToken;
-    const response = await fetch('/api/v1/register2', {
-      method: 'POST',
-      body: JSON.stringify({ itemID, topUpAmount, stripeToken, emailAddress }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer: ${accessToken}`
-      }
-    });
-    const json = await response.json();
-    if (json.error) {
-      throw new Error(json.error.message);
-    }
-    const { user, store } = json.response;
-    dispatch(register2Success({ user, store }));
-    // ensure both the topup and purchase transactions were recorded
-    const path = user.transactions.length === 2 ? `/register/${itemID}/success` : `/register/${itemID}/partial`;
-    browserHistory.push(path);
-  }
-  catch (e) {
-    dispatch(register2Failure(e));
-  }
-};
+export const performRegister2 = ({ itemID, topUpAmount, emailAddress, cardDetails }) =>
+  performTemplate({
+    url: '/api/v1/register2',
+    requestDispatch: register2Request,
+    successDispatch: register2Success,
+    failureDispatch: register2Failure,
+    createBody: async () => {
+      const stripeToken = await createStripeToken(cardDetails);
+      return {
+        itemID,
+        topUpAmount,
+        stripeToken,
+        emailAddress
+      };
+    },
+    withAccessToken: true,
+    onSuccess: ({ user }) => {
+      // ensure both the topup and purchase transactions were recorded
+      const path = user.transactions.length === 2 ? `/register/${itemID}/success` : `/register/${itemID}/partial`;
+      browserHistory.push(path);
+    },
+    onFailure: () => void 0
+  });

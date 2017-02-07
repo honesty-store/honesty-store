@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import { performTemplate } from './template';
 
 export const SIGNIN_REQUEST = 'SIGNIN_REQUEST';
 export const SIGNIN_SUCCESS = 'SIGNIN_SUCCESS';
@@ -22,30 +23,26 @@ const signinFailure = () => {
   };
 };
 
-export const performSignin = ({ itemId, emailAddress }) => async (dispatch, getState) => {
-  dispatch(signinRequest());
-  try {
-    const response = await fetch('/api/v1/signin', {
-      method: 'POST',
-      body: JSON.stringify({ emailAddress }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    const json = await response.json();
-    if (json.error) {
-      throw new Error(json.error.message);
-    }
-    dispatch(signinSuccess());
-    browserHistory.push(`/signin/success`);
-  }
-  catch (e) {
-    dispatch(signinFailure());
+export const performSignin = ({ itemId, emailAddress }) =>
+  performTemplate({
+    url: '/api/v1/signin',
+    requestDispatch: signinRequest,
+    successDispatch: signinSuccess,
+    failureDispatch: signinFailure,
+    createBody: async () => ({ emailAddress }),
+    withAccessToken: false,
+    onSuccess: () => browserHistory.push(`/signin/success`),
+    onFailure: () => browserHistory.push(`/error`)
+  });
+
+/*
+
+ TODO:
     if (e.message.match(/User not found/)) {
       // Register user
       browserHistory.push(`/register/${itemId}/${emailAddress}`);
     } else {
       browserHistory.push(`/error`);
     }
-  }
-};
+
+*/

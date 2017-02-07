@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import { performTemplate } from './template';
 
 export const TOPUP_REQUEST = 'TOPUP_REQUEST';
 export const TOPUP_SUCCESS = 'TOPUP_SUCCESS';
@@ -17,33 +18,33 @@ const topupSuccess = (response) => {
   };
 };
 
-const topupFailure = () => {
+const topupFailure = (error) => {
   return {
-    type: TOPUP_FAILURE
+    type: TOPUP_FAILURE,
+    error,
   };
 };
 
-export const performTopup = ({ amount }) => async (dispatch, getState) => {
-  dispatch(topupRequest());
-  try {
-    const accessToken = getState().accessToken;
-    const response = await fetch('/api/v1/topup', {
-      method: 'POST',
-      body: JSON.stringify({ amount }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer: ${accessToken}`
-      }
-    });
-    const json = await response.json();
-    if (json.error) {
-      throw new Error(json.error.message);
+export const performTopup = ({ amount }) =>
+  performTemplate({
+    url: '/api/v1/topup',
+    requestDispatch: topupRequest,
+    successDispatch: topupSuccess,
+    failureDispatch: topupFailure,
+    createBody: async () => ({ amount }),
+    withAccessToken: true,
+    onSuccess: () => browserHistory.push(`/topup/success`),
+    onFailure: () => browserHistory.push(`/topup/error`)
+  });
+
+/*
+
+  TODO:
+    if (e.message.indexOf('topping up would increase balance over the limit') !== -1) {
+      dispatch(topupFailure(e.message));
+      browserHistory.push(`/error`);
+    } else {
+      dispatch(topupFailure());
+      browserHistory.push(`/topup/error`);
     }
-    dispatch(topupSuccess(json.response));
-    browserHistory.push(`/topup/success`);
-  }
-  catch (e) {
-    dispatch(topupFailure());
-    browserHistory.push(`/topup/error`);
-  }
-};
+*/

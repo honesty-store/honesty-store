@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import { performTemplate } from './template';
 
 export const PURCHASE_REQUEST = 'PURCHASE_REQUEST';
 export const PURCHASE_SUCCESS = 'PURCHASE_SUCCESS';
@@ -23,27 +24,14 @@ const purchaseFailure = () => {
   };
 };
 
-export const performPurchase = ({ itemId, quantity }) => async (dispatch, getState) => {
-  dispatch(purchaseRequest());
-  try {
-    const { accessToken } = getState();
-    const response = await fetch('/api/v1/purchase', {
-      method: 'POST',
-      body: JSON.stringify({ itemID: itemId, quantity }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer: ${accessToken}`
-      }
-    });
-    const json = await response.json();
-    if (json.error) {
-      throw new Error(json.error.message);
-    }
-    dispatch(purchaseSuccess(json.response));
-    browserHistory.push(`/item/${itemId}/success`);
-  }
-  catch (e) {
-    dispatch(purchaseFailure());
-    browserHistory.push(`/item/error`);
-  }
-};
+export const performPurchase = ({ itemId, quantity }) =>
+  performTemplate({
+    url: '/api/v1/purchase',
+    requestDispatch: purchaseRequest,
+    successDispatch: purchaseSuccess,
+    failureDispatch: purchaseFailure,
+    createBody: async () => ({ itemID: itemId, quantity }),
+    withAccessToken: true,
+    onSuccess: () => browserHistory.push(`/item/${itemId}/success`),
+    onFailure: () => browserHistory.push(`/item/error`)
+  });

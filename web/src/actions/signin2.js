@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import { performTemplate } from './template';
 
 export const SIGNIN2_REQUEST = 'SIGNIN2_REQUEST';
 export const SIGNIN2_SUCCESS = 'SIGNIN2_SUCCESS';
@@ -23,26 +24,15 @@ const signin2Failure = () => {
   };
 };
 
-export const performSignin2 = ({ emailToken }) => async (dispatch, getState) => {
-  dispatch(signin2Request());
-  try {
-    const response = await fetch('/api/v1/signin2', {
-      method: 'POST',
-      body: JSON.stringify({}),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer: ${emailToken}`
-      }
-    });
-    const json = await response.json();
-    if (json.error) {
-      throw new Error(json.error.message);
-    }
-    dispatch(signin2Success(json.response));
-    browserHistory.push(`/store`);
-  }
-  catch (e) {
-    dispatch(signin2Failure());
-    browserHistory.push(`/error`);
-  }
-};
+export const performSignin2 = ({ emailToken }) =>
+  performTemplate({
+    url: '/api/v1/signin2',
+    requestDispatch: signin2Request,
+    successDispatch: signin2Success,
+    failureDispatch: signin2Failure,
+    createBody: async () => ({}),
+    withAccessToken: false,
+    // FIXME: 'Authorization': `Bearer: ${emailToken}`
+    onSuccess: () => browserHistory.push(`/store`),
+    onFailure: () => browserHistory.push(`/error`)
+  });

@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import { performTemplate } from './template';
 
 export const SUPPORT_REQUEST = 'SUPPORT_REQUEST';
 export const SUPPORT_SUCCESS = 'SUPPORT_SUCCESS';
@@ -22,28 +23,21 @@ const supportFailure = () => {
   };
 };
 
-export const performSupport = ({ message, emailAddress }) => async (dispatch, getState) => {
-  dispatch(supportRequest());
-  const userAgent = navigator.userAgent;
-  try {
-    const accessToken = getState().accessToken;
-    const response = await fetch('/api/v1/support', {
-      method: 'POST',
-      body: JSON.stringify({ message, emailAddress, userAgent }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer: ${accessToken}`
-      }
-    });
-    const json = await response.json();
-    if (json.error) {
-      throw new Error(json.error.message);
-    }
-    dispatch(supportSuccess(json.response));
-    browserHistory.push(`/help/success`);
-  }
-  catch (e) {
-    dispatch(supportFailure());
-    browserHistory.push(`/error`);
-  }
-};
+export const performSupport = ({ message, emailAddress }) =>
+  performTemplate({
+    url: '/api/v1/support',
+    requestDispatch: supportRequest,
+    successDispatch: supportSuccess,
+    failureDispatch: supportFailure,
+    createBody: async () => {
+      const userAgent = navigator.userAgent;
+      return {
+        message,
+        emailAddress,
+        userAgent
+      };
+    },
+    withAccessToken: true,
+    onSuccess: () => browserHistory.push(`/help/success`),
+    onFailure: () => browserHistory.push(`/error`)
+  });

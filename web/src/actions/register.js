@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import { performTemplate } from './template';
 
 export const REGISTER_REQUEST = 'REGISTER_REQUEST';
 export const REGISTER_SUCESSS = 'REGISTER_SUCESSS';
@@ -22,25 +23,14 @@ const registerFailure = () => ({
   type: REGISTER_FAILURE
 });
 
-export const performRegister = ({ storeCode }) => async (dispatch, getState) => {
-  dispatch(registerRequest());
-  try {
-    const response = await fetch('/api/v1/register', {
-      method: 'POST',
-      body: JSON.stringify({ storeCode }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    const json = await response.json();
-    if (json.error) {
-      throw new Error(json.error.message);
-    }
-    dispatch(registerSuccess(json.response));
-    browserHistory.push(`/store`);
-  }
-  catch (e) {
-    dispatch(registerFailure());
-    browserHistory.push(`/error`);
-  }
-};
+export const performRegister = ({ storeCode }) =>
+  performTemplate({
+    url: '/api/v1/register',
+    requestDispatch: registerRequest,
+    successDispatch: registerSuccess,
+    failureDispatch: registerFailure,
+    createBody: async () => ({ storeCode }),
+    withAccessToken: false,
+    onSuccess: () => browserHistory.push(`/store`),
+    onFailure: () => browserHistory.push(`/error`)
+  });
