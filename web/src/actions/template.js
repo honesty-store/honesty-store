@@ -1,8 +1,10 @@
 import { UserError } from '../../../service/src/errorDefinitions';
+import { browserHistory } from 'react-router';
 
 export const performTemplate = ({
   url,
   requestDispatch, successDispatch, failureDispatch,
+  unauthDispatch = undefined,
   createBody, createToken,
   onSuccess, onFailure
 }) => async (dispatch, getState) => {
@@ -20,6 +22,11 @@ export const performTemplate = ({
     const json = await response.json();
     if (json.error) {
       throw new Error(json.error.message);
+    }
+    if (unauthDispatch && response.status === 401) {
+      dispatch(unauthDispatch());
+      browserHistory.push(`/`);
+      return;
     }
     dispatch(successDispatch(json.response));
     onSuccess(json.response);

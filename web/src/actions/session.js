@@ -37,6 +37,7 @@ export const performSession = () =>
     requestDispatch: sessionRequest,
     successDispatch: sessionSuccess,
     failureDispatch: sessionFailure,
+    unauthDispatch: sessionUnauthorised,
     createBody: undefined,
     createToken: (getState) => getState().accessToken,
     onSuccess: () => void 0,
