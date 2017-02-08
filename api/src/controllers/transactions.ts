@@ -1,5 +1,4 @@
 import HTTPStatus = require('http-status');
-import { ServiceRouterCode } from '../../../service/src/router';
 import { authenticateAccessToken } from '../middleware/authenticate';
 import { getTransactionHistory } from '../services/transaction';
 
@@ -25,10 +24,6 @@ export default (router) => {
     async (key, _params, _body, { query, user }) => {
       const page = parseInt(query.page, 10) || 0;
 
-      try {
-        return await getPagedTransactions({ key, accountID: user.accountId, page });
-      } catch (e) {
-        throw new ServiceRouterCode(HTTPStatus.INTERNAL_SERVER_ERROR, e);
-      }
+      return await getPagedTransactions({ key, accountID: user.accountId, page });
     });
 };

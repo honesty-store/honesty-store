@@ -26,17 +26,6 @@ interface Router {
   put<Body, Result>(path: string, authentication: ExpressAuthentication, action: BodyAction<Body, Result>);
 }
 
-export class ServiceRouterCode extends Error {
-  public statusCode: number;
-  public nestedException: Error;
-
-  constructor(statusCode: number, nestedException: Error) {
-    super(nestedException.message);
-    this.nestedException = nestedException;
-    this.statusCode = statusCode;
-  }
-}
-
 const extractKey = (request, service: string): Key => {
   try {
     return JSON.parse(request.get('key'));
@@ -67,25 +56,6 @@ export const serviceAuthentication = (request, response, next) => {
   next();
 };
 
-const populateErrorResponse = (e, errorResponse) => {
-  if (e.nestedException) {
-    // 'e' is a ServiceRouterCode with a nested exception we should also expand.
-    // Done first as outer errors override it.
-    populateErrorResponse(e.nestedException, errorResponse);
-  }
-
-  if (e.statusCode) {
-    // 'e' is a ServiceRouterCode with a statusCode we should pass back
-    errorResponse.statusCode = e.statusCode;
-  }
-
-  // 'e' may be a UserErrorCode:
-  if (e.userErrorCode) {
-    errorResponse.userErrorCode = e.userErrorCode;
-  }
-};
-
-
 const createEndPoint = (service, internalRouter, version, method: 'get' | 'post' | 'put') =>
   <Body, Result>(path, authentication: ExpressAuthentication, action: BodyAction<Body, Result>) => {
     internalRouter[method](
@@ -107,18 +77,13 @@ const createEndPoint = (service, internalRouter, version, method: 'get' | 'post'
             const duration = timer();
             error(key, `failed ${method} ${request.url}`, { e, duration });
 
-            const errorResponse = {
-              statusCode: 200,
-              message: e.message,
-              userErrorCode: undefined
-            };
-            populateErrorResponse(e, errorResponse);
+            const errorCode: UserError = e.code || 'UnknownError';
 
-            response.status(errorResponse.statusCode)
+            response.status(200)
               .json({
                 error: {
                   message: errorResponse.message,
-                  userErrorCode: errorResponse.userErrorCode
+                  errorCode
                 }
               });
           });
