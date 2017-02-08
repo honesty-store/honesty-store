@@ -31,7 +31,7 @@ export const performLogout = () =>
     successDispatch: logoutSuccess,
     failureDispatch: logoutFailure,
     createBody: undefined,
-    withAccessToken: true,
+    createToken: (getState) => getState().accessToken,
     onSuccess: () => browserHistory.push(`/`),
     onFailure: () => void 0,
   });

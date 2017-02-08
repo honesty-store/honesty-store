@@ -30,7 +30,7 @@ export const performRegister = ({ storeCode }) =>
     successDispatch: registerSuccess,
     failureDispatch: registerFailure,
     createBody: async () => ({ storeCode }),
-    withAccessToken: false,
+    createToken: undefined,
     onSuccess: () => browserHistory.push(`/store`),
     onFailure: () => browserHistory.push(`/error`)
   });

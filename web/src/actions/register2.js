@@ -74,7 +74,7 @@ export const performRegister2 = ({ itemID, topUpAmount, emailAddress, cardDetail
         emailAddress
       };
     },
-    withAccessToken: true,
+    createToken: (getState) => getState().accessToken,
     onSuccess: ({ user }) => {
       // ensure both the topup and purchase transactions were recorded
       const path = user.transactions.length === 2 ? `/register/${itemID}/success` : `/register/${itemID}/partial`;

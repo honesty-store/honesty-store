@@ -31,8 +31,7 @@ export const performSignin2 = ({ emailToken }) =>
     successDispatch: signin2Success,
     failureDispatch: signin2Failure,
     createBody: async () => ({}),
-    withAccessToken: false,
-    // FIXME: 'Authorization': `Bearer: ${emailToken}`
+    createToken: (getState) => emailToken,
     onSuccess: () => browserHistory.push(`/store`),
     onFailure: () => browserHistory.push(`/error`)
   });

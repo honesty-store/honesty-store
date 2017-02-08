@@ -30,7 +30,7 @@ export const performSignin = ({ itemId, emailAddress }) =>
     successDispatch: signinSuccess,
     failureDispatch: signinFailure,
     createBody: async () => ({ emailAddress }),
-    withAccessToken: false,
+    createToken: undefined,
     onSuccess: () => browserHistory.push(`/signin/success`),
     onFailure: () => browserHistory.push(`/error`)
   });

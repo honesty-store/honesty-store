@@ -32,7 +32,7 @@ export const performTopup = ({ amount }) =>
     successDispatch: topupSuccess,
     failureDispatch: topupFailure,
     createBody: async () => ({ amount }),
-    withAccessToken: true,
+    createToken: (getState) => getState().accessToken,
     onSuccess: () => browserHistory.push(`/topup/success`),
     onFailure: () => browserHistory.push(`/topup/error`)
   });
