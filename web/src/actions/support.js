@@ -38,7 +38,7 @@ export const performSupport = ({ message, emailAddress }) =>
         userAgent
       };
     },
-    createToken: (getState) => getState().accessToken,
+    getToken: (getState) => getState().accessToken,
     onSuccess: () => browserHistory.push(`/help/success`),
     onFailure: () => browserHistory.push(`/error`)
   });

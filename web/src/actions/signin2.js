@@ -32,7 +32,7 @@ export const performSignin2 = ({ emailToken }) =>
     successDispatch: signin2Success,
     failureDispatch: signin2Failure,
     createBody: async () => ({}),
-    createToken: (getState) => emailToken,
+    getToken: (getState) => emailToken,
     onSuccess: () => browserHistory.push(`/store`),
     onFailure: () => browserHistory.push(`/error`)
   });

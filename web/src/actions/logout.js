@@ -32,7 +32,7 @@ export const performLogout = () =>
     successDispatch: logoutSuccess,
     failureDispatch: logoutFailure,
     createBody: undefined,
-    createToken: (getState) => getState().accessToken,
+    getToken: (getState) => getState().accessToken,
     onSuccess: () => browserHistory.push(`/`),
     onFailure: () => {},
   });

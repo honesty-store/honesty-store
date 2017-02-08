@@ -31,7 +31,7 @@ export const performSignin = ({ itemId, emailAddress }) =>
     successDispatch: signinSuccess,
     failureDispatch: signinFailure,
     createBody: async () => ({ emailAddress }),
-    createToken: undefined,
+    getToken: undefined,
     onSuccess: () => browserHistory.push(`/signin/success`),
     onFailure: (e) => {
       if (e.code === 'EmailNotFound') {

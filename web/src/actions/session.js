@@ -40,7 +40,7 @@ export const performSession = () =>
     failureDispatch: sessionFailure,
     unauthDispatch: sessionUnauthorised,
     createBody: undefined,
-    createToken: (getState) => getState().accessToken,
+    getToken: (getState) => getState().accessToken,
     onSuccess: () => {},
     onFailure: () => browserHistory.push(`/error`)
   });

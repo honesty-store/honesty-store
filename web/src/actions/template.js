@@ -4,12 +4,12 @@ export const performTemplate = ({
   url,
   requestDispatch, successDispatch, failureDispatch,
   unauthDispatch = undefined,
-  createBody, createToken,
+  createBody, getToken,
   onSuccess, onFailure
 }) => async (dispatch, getState) => {
   dispatch(requestDispatch());
   try {
-    const token = createToken && createToken(getState);
+    const token = getToken && getToken(getState);
     const response = await fetch(url, {
       method: 'POST',
       body: createBody ? JSON.stringify(await createBody()) : undefined,
