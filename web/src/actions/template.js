@@ -22,7 +22,7 @@ export const performTemplate = ({
     if (json.error) {
       const error = new Error(json.error.message);
       if (json.error.code) {
-        error.code = json.error.code;
+        throw Object.assign(error, { code: json.error.code });
       }
       throw error;
     }
