@@ -6,7 +6,7 @@ import { MUTED_TEXT } from './colors';
 import sucess from './assets/success.svg';
 import error from './assets/error.svg';
 import './modal.css';
-import errorStrings from './errors';
+import errorDefinitions from './errors';
 
 const Modal = ({
   title,
@@ -32,9 +32,11 @@ const Modal = ({
   </Page>;
 
 const defaultSubtitle = 'Oops! Something went wrong...';
+const retryTitle = 'Can you try that again, please?';
+const failureTitle = 'I\'m afraid I can\'t let you do that, Dave';
 
 const ErrorInternal = ({
-  title = 'Can you try that again, please?',
+  title = retryTitle,
   subtitle = defaultSubtitle,
   image = error,
   dismissError,
@@ -46,9 +48,21 @@ const ErrorInternal = ({
     onClick={dismissError}
     {...other} />;
 
-const mapErrorStateToProps = ({ error }) => ({
-  subtitle: error && (errorStrings[error.code] || defaultSubtitle)
-});
+const mapErrorStateToProps = ({ error }) => {
+  if (!error) {
+    return {};
+  }
+
+  const errorDef = errorDefinitions[error.code];
+  if (!errorDef) {
+    return {};
+  }
+
+  return {
+    subtitle: errorDef.humanReadable,
+    title: errorDef.retryable ? retryTitle : failureTitle
+  };
+};
 
 const mapDispatchToProps = { dismissError };
 
