@@ -34,17 +34,5 @@ export const performTopup = ({ amount }) =>
     createBody: async () => ({ amount }),
     createToken: (getState) => getState().accessToken,
     onSuccess: () => browserHistory.push(`/topup/success`),
-    onFailure: () => browserHistory.push(`/topup/error`)
+    onFailure: () => browserHistory.push(`/error`)
   });
-
-/*
-
-  TODO:
-    if (e.message.indexOf('topping up would increase balance over the limit') !== -1) {
-      dispatch(topupFailure(e.message));
-      browserHistory.push(`/error`);
-    } else {
-      dispatch(topupFailure());
-      browserHistory.push(`/topup/error`);
-    }
-*/

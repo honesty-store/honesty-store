@@ -34,5 +34,5 @@ export const performPurchase = ({ itemId, quantity }) =>
     createBody: async () => ({ itemID: itemId, quantity }),
     createToken: (getState) => getState().accessToken,
     onSuccess: () => browserHistory.push(`/item/${itemId}/success`),
-    onFailure: () => browserHistory.push(`/item/error`)
+    onFailure: () => browserHistory.push(`/error`)
   });
