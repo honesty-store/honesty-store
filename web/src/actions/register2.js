@@ -39,6 +39,16 @@ const register2Success = ({ user, store }) => {
 };
 
 const register2Failure = (error) => {
+  if (error.param) {
+    // an error from createStripeToken()
+    // - map it to registerError for the reducer
+    return {
+      type: REGISTER2_FAILURE,
+      registerError: error
+    };
+  }
+
+  // error is from the backend/fetch
   return {
     type: REGISTER2_FAILURE,
     error

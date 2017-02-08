@@ -105,11 +105,11 @@ export default (state = getInitialState(), action) => {
       };
     }
     case REGISTER2_FAILURE: {
-      const { error } = action;
+      const { registerError } = action;
       return {
         ...state,
         register: {
-          error
+          error: registerError
         },
         pending: state.pending.filter(e => e !== 'register2')
       };
