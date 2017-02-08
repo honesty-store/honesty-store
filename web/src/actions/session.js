@@ -41,6 +41,6 @@ export const performSession = () =>
     unauthDispatch: sessionUnauthorised,
     createBody: undefined,
     createToken: (getState) => getState().accessToken,
-    onSuccess: () => void 0,
+    onSuccess: () => {},
     onFailure: () => browserHistory.push(`/error`)
   });

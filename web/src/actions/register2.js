@@ -90,5 +90,5 @@ export const performRegister2 = ({ itemID, topUpAmount, emailAddress, cardDetail
       const path = user.transactions.length === 2 ? `/register/${itemID}/success` : `/register/${itemID}/partial`;
       browserHistory.push(path);
     },
-    onFailure: () => void 0
+    onFailure: () => {}
   });

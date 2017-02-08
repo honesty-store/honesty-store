@@ -34,5 +34,5 @@ export const performLogout = () =>
     createBody: undefined,
     createToken: (getState) => getState().accessToken,
     onSuccess: () => browserHistory.push(`/`),
-    onFailure: () => void 0,
+    onFailure: () => {},
   });
