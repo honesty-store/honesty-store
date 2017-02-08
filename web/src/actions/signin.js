@@ -32,17 +32,11 @@ export const performSignin = ({ itemId, emailAddress }) =>
     createBody: async () => ({ emailAddress }),
     createToken: undefined,
     onSuccess: () => browserHistory.push(`/signin/success`),
-    onFailure: () => browserHistory.push(`/error`)
-  });
-
-/*
-
- TODO:
-    if (e.message.match(/User not found/)) {
-      // Register user
-      browserHistory.push(`/register/${itemId}/${emailAddress}`);
-    } else {
-      browserHistory.push(`/error`);
+    onFailure: (e) => {
+      if (e.code === 'EmailNotFound') {
+        browserHistory.push(`/register/${itemId}/${emailAddress}`);
+      } else {
+        browserHistory.push(`/error`);
+      }
     }
-
-*/
+  });
