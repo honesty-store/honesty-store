@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { browserHistory } from 'react-router';
+import { dismissError } from '../actions/dismissError';
 import Page from './page';
 import { MUTED_TEXT } from './colors';
 import sucess from './assets/success.svg';
@@ -35,20 +35,22 @@ const ErrorInternal = ({
   title = 'Can you try that again, please?',
   subtitle = 'Oops! Something went wrong...',
   image = error,
-  onClick = () => browserHistory.goBack(),
+  dismissError,
   ...other
 }) =>
   <Modal title={title}
     subtitle={subtitle}
     image={image}
-    onClick={onClick}
+    onClick={dismissError}
     {...other} />;
 
 const mapErrorStateToProps = ({ error }) => ({
   subtitle: error && (errorStrings[error.code] || '(unknown error)')
 });
 
-export const Error = connect(mapErrorStateToProps)(ErrorInternal);
+const mapDispatchToProps = { dismissError };
+
+export const Error = connect(mapErrorStateToProps, mapDispatchToProps)(ErrorInternal);
 
 export const Success = ({
   title = '',
