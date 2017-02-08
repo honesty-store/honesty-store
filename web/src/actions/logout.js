@@ -18,9 +18,10 @@ const logoutSuccess = (response) => {
   };
 };
 
-const logoutFailure = () => {
+const logoutFailure = (error) => {
   return {
-    type: LOGOUT_FAILURE
+    type: LOGOUT_FAILURE,
+    error
   };
 };
 

@@ -18,9 +18,10 @@ const signin2Success = (response) => {
   };
 };
 
-const signin2Failure = () => {
+const signin2Failure = (error) => {
   return {
-    type: SIGNIN2_FAILURE
+    type: SIGNIN2_FAILURE,
+    error
   };
 };
 

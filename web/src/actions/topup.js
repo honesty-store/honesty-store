@@ -21,7 +21,7 @@ const topupSuccess = (response) => {
 const topupFailure = (error) => {
   return {
     type: TOPUP_FAILURE,
-    error,
+    error
   };
 };
 

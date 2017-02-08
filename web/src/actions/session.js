@@ -19,9 +19,10 @@ const sessionSuccess = (response) => {
   };
 };
 
-const sessionFailure = () => {
+const sessionFailure = (error) => {
   return {
-    type: SESSION_FAILURE
+    type: SESSION_FAILURE,
+    error
   };
 };
 

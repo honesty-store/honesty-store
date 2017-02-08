@@ -17,9 +17,10 @@ const supportSuccess = () => {
   };
 };
 
-const supportFailure = () => {
+const supportFailure = (error) => {
   return {
-    type: SUPPORT_FAILURE
+    type: SUPPORT_FAILURE,
+    error
   };
 };
 

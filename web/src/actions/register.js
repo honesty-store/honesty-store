@@ -19,8 +19,9 @@ const registerSuccess = ({ user, store, accessToken, refreshToken }) => ({
   }
 });
 
-const registerFailure = () => ({
-  type: REGISTER_FAILURE
+const registerFailure = (error) => ({
+  type: REGISTER_FAILURE,
+  error
 });
 
 export const performRegister = ({ storeCode }) =>

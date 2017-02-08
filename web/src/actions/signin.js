@@ -17,9 +17,10 @@ const signinSuccess = () => {
   };
 };
 
-const signinFailure = () => {
+const signinFailure = (error) => {
   return {
-    type: SIGNIN_FAILURE
+    type: SIGNIN_FAILURE,
+    error
   };
 };
 
