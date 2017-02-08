@@ -1,10 +1,12 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import Page from './page';
 import { MUTED_TEXT } from './colors';
 import sucess from './assets/success.svg';
 import error from './assets/error.svg';
 import './modal.css';
+import errorStrings from './errors';
 
 const Modal = ({
   title,
@@ -29,7 +31,7 @@ const Modal = ({
     </div>
   </Page>;
 
-export const Error = ({
+const ErrorInternal = ({
   title = 'Can you try that again, please?',
   subtitle = 'Oops! Something went wrong...',
   image = error,
@@ -41,6 +43,12 @@ export const Error = ({
     image={image}
     onClick={onClick}
     {...other} />;
+
+const mapErrorStateToProps = ({ error }) => ({
+  subtitle: error && (errorStrings[error.code] || '(unknown error)')
+});
+
+export const Error = connect(mapErrorStateToProps)(ErrorInternal);
 
 export const Success = ({
   title = '',
