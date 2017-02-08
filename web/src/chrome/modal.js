@@ -59,7 +59,7 @@ const mapErrorStateToProps = ({ error }) => {
   }
 
   return {
-    subtitle: errorDef.humanReadable,
+    subtitle: errorDef.humanReadableString,
     title: errorDef.retryable ? retryTitle : failureTitle
   };
 };
