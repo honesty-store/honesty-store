@@ -31,9 +31,11 @@ const Modal = ({
     </div>
   </Page>;
 
+const defaultSubtitle = 'Oops! Something went wrong...';
+
 const ErrorInternal = ({
   title = 'Can you try that again, please?',
-  subtitle = 'Oops! Something went wrong...',
+  subtitle = defaultSubtitle,
   image = error,
   dismissError,
   ...other
@@ -45,7 +47,7 @@ const ErrorInternal = ({
     {...other} />;
 
 const mapErrorStateToProps = ({ error }) => ({
-  subtitle: error && (errorStrings[error.code] || '(unknown error)')
+  subtitle: error && (errorStrings[error.code] || defaultSubtitle)
 });
 
 const mapDispatchToProps = { dismissError };
