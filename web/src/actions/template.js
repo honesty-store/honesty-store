@@ -18,6 +18,11 @@ export const performTemplate = ({
         ...(token ? { 'Authorization': `Bearer: ${token}` } : {})
       }
     });
+    if (unauthDispatch && response.status === 401) {
+      dispatch(unauthDispatch());
+      browserHistory.push(`/`);
+      return;
+    }
     const json = await response.json();
     if (json.error) {
       const error = new Error(json.error.message);
@@ -25,11 +30,6 @@ export const performTemplate = ({
         throw Object.assign(error, { code: json.error.code });
       }
       throw error;
-    }
-    if (unauthDispatch && response.status === 401) {
-      dispatch(unauthDispatch());
-      browserHistory.push(`/`);
-      return;
     }
     dispatch(successDispatch(json.response));
     onSuccess(json.response);
