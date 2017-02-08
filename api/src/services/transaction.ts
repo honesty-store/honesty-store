@@ -1,6 +1,6 @@
+import { UserError } from '../../../service/src/errorDefinitions';
 import { createTransaction, getAccount, TransactionDetails } from '../../../transaction/src/client/index';
 import { getPrice } from '../services/store';
-import { UserError, TooManyPurchaseItems } from '../../../service/src/errorDefinitions';
 
 const assertValidQuantity = (quantity) => {
   if (!Number.isInteger(quantity)) {

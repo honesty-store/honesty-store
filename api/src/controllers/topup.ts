@@ -1,4 +1,3 @@
-import HTTPStatus = require('http-status');
 import { createTopup } from '../../../topup/src/client/index';
 import { authenticateAccessToken } from '../middleware/authenticate';
 

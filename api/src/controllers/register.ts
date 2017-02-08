@@ -1,5 +1,4 @@
 import isEmail = require('validator/lib/isEmail');
-import HTTPStatus = require('http-status');
 import { error } from '../../../service/src/log';
 import uuid = require('uuid/v4');
 

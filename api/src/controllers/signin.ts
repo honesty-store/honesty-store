@@ -1,4 +1,3 @@
-import HTTPStatus = require('http-status');
 import { tagKey } from '../../../service/src/key';
 import { sendMagicLinkEmail } from '../../../user/src/client/index';
 import { authenticateEmailToken, noopAuthentication } from '../middleware/authenticate';

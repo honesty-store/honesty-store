@@ -1,4 +1,3 @@
-import HTTPStatus = require('http-status');
 import { authenticateAccessToken } from '../middleware/authenticate';
 import { getTransactionHistory } from '../services/transaction';
 

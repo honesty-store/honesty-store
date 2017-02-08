@@ -1,3 +1,5 @@
+import { UserError } from '../../../service/src/errorDefinitions';
+
 export const performTemplate = ({
   url,
   requestDispatch, successDispatch, failureDispatch,

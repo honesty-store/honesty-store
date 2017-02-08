@@ -1,5 +1,5 @@
+import { UserError } from '../../../service/src/errorDefinitions';
 import fetch from '../../../service/src/fetch';
-import { UserError, TOPUP_EXCEEDS_MAX_BALANCE } from '../../../service/src/errorDefinitions';
 
 export const balanceLimit = 1000; // £10
 

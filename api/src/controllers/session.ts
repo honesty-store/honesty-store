@@ -1,4 +1,3 @@
-import HTTPStatus = require('http-status');
 import { authenticateRefreshToken } from '../middleware/authenticate';
 import { getSessionData } from '../services/session';
 
