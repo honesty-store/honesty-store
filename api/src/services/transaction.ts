@@ -1,6 +1,6 @@
 import { createTransaction, getAccount, TransactionDetails } from '../../../transaction/src/client/index';
 import { getPrice } from '../services/store';
-import { UserError, TOO_MANY_PURCHASE_ITEMS } from '../../../service/src/errorDefinitions';
+import { UserError, TooManyPurchaseItems } from '../../../service/src/errorDefinitions';
 
 const assertValidQuantity = (quantity) => {
   if (!Number.isInteger(quantity)) {
@@ -10,7 +10,7 @@ const assertValidQuantity = (quantity) => {
     throw new Error(`quantity ${quantity} too small`);
   }
   if (quantity > 10) {
-    throw new UserError(TOO_MANY_PURCHASE_ITEMS, `quantity ${quantity} too large`);
+    throw new UserError('TooManyPurchaseItems', `quantity ${quantity} too large`);
   }
 };
 

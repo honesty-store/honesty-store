@@ -48,7 +48,7 @@ export const assertBalanceWithinLimit = async ({ key, accountId, amount }) => {
 
   if (currentBalance + amount > balanceLimit) {
     throw new UserError(
-      TOPUP_EXCEEDS_MAX_BALANCE,
+      'TopupExceedsMaxBalance',
       `topping up would increase balance over the limit of £${balanceLimit / 100}`);
   }
 };
