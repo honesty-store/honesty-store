@@ -20,7 +20,9 @@ const signinSuccess = () => {
 const signinFailure = (error) => {
   return {
     type: SIGNIN_FAILURE,
-    error
+    /* we hide EmailNotFound errors as we transparently handle them and
+     * redirect the user to /register/:itemId/:emailAddress (see below) */
+    error: (error.code === 'EmailNotFound' ? undefined : error)
   };
 };
 
