@@ -162,7 +162,7 @@ const stripeCodeToErrorCode = (stripeCode) => {
 };
 
 const userErrorFromStripeError = (stripeError) => {
-  if (stripeError.type !== 'card_error') {
+  if (stripeError.type !== 'StripeCardError') {
     return stripeError;
   }
 
