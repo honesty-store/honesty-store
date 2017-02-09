@@ -26,8 +26,8 @@ const unpackCardErrors = ({ validationError, backendError }) => {
   } else if (backendError) {
     return {
       errorMessage: codeIsCardProviderError(backendError.code)
-        ? errorDefinitions[backendError.code].humanReadableString
-        : errorDefinitions['CardErrorGeneric'].humanReadableString,
+        ? errorDefinitions[backendError.code].message
+        : errorDefinitions['CardError'].message,
 
       bogusParameterName: paramFromCardProviderError(backendError)
     };

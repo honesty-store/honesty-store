@@ -5,15 +5,15 @@ export type ErrorCode =
   'TooManyPurchaseItems' |
   'EmailNotFound' |
   'NoCardDetailsPresent' |
-  'CardProviderError' |
-  'CardInvalidCCNumber' |
+  'CardIncorrectNumber' |
+  'CardInvalidNumber' |
   'CardInvalidExpiryMonth' |
   'CardInvalidExpiryYear' |
+  'CardIncorrectCVC' |
   'CardInvalidCVC' |
   'CardExpired' |
-  'CardInvalidSecurityCode' |
   'CardDeclined' |
-  'CardErrorGeneric' |
+  'CardError' |
   'UnknownError';
 
 export class UserError extends Error {

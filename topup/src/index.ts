@@ -143,13 +143,13 @@ const appendTopupTransaction = async ({ key, topupAccount, amount, data }
 
 const stripeCodeToErrorCode = (stripeCode) => {
   switch (stripeCode) {
-    case 'incorrect_number':      return 'CardInvalidCCNumber';
-    case 'invalid_number':        return 'CardInvalidCCNumber';
+    case 'incorrect_number':      return 'CardIncorrectNumber';
+    case 'invalid_number':        return 'CardInvalidNumber';
     case 'invalid_expiry_month':  return 'CardInvalidExpiryMonth';
     case 'invalid_expiry_year':   return 'CardInvalidExpiryYear';
+    case 'incorrect_cvc':         return 'CardIncorrectCVC';
     case 'invalid_cvc':           return 'CardInvalidCVC';
     case 'expired_card':          return 'CardExpired';
-    case 'incorrect_cvc':         return 'CardInvalidSecurityCode';
     case 'card_declined':         return 'CardDeclined';
 
     case 'incorrect_zip':
@@ -157,7 +157,7 @@ const stripeCodeToErrorCode = (stripeCode) => {
     case 'processing_error':
       // fall through
     default:
-      return 'CardErrorGeneric';
+      return 'CardError';
   }
 };
 
