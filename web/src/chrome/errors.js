@@ -14,7 +14,8 @@ export const errorDefinitions = {
   CardExpired: { humanReadableString: cardErrorString, retryable: true },
   CardInvalidSecurityCode: { humanReadableString: cardErrorString, retryable: true },
   CardDeclined: { humanReadableString: cardErrorString, retryable: true },
-  CardErrorGeneric: { humanReadableString: cardErrorString, retryable: true }
+  CardErrorGeneric: { humanReadableString: cardErrorString, retryable: true },
+  NoCardDetailsPresent: { humanReadableString: 'We have no card details for you', retryable: true } // this should be handled transparently
 };
 
 export const codeIsCardProviderError = code => code.startsWith('Card');

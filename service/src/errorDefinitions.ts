@@ -4,6 +4,7 @@ export type ErrorCode =
   'TopupExceedsMaxBalance' |
   'TooManyPurchaseItems' |
   'EmailNotFound' |
+  'NoCardDetailsPresent' |
   'CardProviderError' |
   'CardInvalidCCNumber' |
   'CardInvalidExpiryMonth' |
