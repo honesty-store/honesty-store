@@ -6,7 +6,7 @@ import { MUTED_TEXT } from './colors';
 import sucess from './assets/success.svg';
 import error from './assets/error.svg';
 import './modal.css';
-import errorDefinitions from './errors';
+import { errorDefinitions } from './errors';
 
 const Modal = ({
   title,

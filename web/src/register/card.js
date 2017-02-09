@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Button from '../chrome/button';
+import { codeIsCardProviderError, errorDefinitions, paramFromCardProviderError } from '../chrome/errors.js';
 import { DANGER } from '../chrome/colors';
 import { Back } from '../chrome/link';
 import Page from '../chrome/page';
@@ -68,6 +69,14 @@ class Card extends React.Component {
   render() {
     const { error } = this.props;
     const { number, exp, cvc } = this.state;
+
+    const errorMessage =
+      codeIsCardProviderError(error.code)
+      ? errorDefinitions[error.code].humanReadableString
+      : error.message;
+
+    error.param = paramFromCardProviderError(error);
+
     return <Page left={<Back>Register</Back>}
       title={`Top Up`}
       invert={true}
@@ -78,7 +87,7 @@ class Card extends React.Component {
           error ?
             <div style={{ color: DANGER }}>
               <p>There was a problem collecting payment from your card, please check the details</p>
-              <p>{error.message}</p>
+              <p>{errorMessage}</p>
             </div>
             :
             <div>
