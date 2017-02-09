@@ -14,11 +14,9 @@ const zeroPadMonth = (month) => {
   return `${prefix}${month}`;
 };
 
-const TopupCard = ({ cardDetails: { brand, last4, expMonth, expYear }, amount, performTopup }) => {
-  const expiry = `${zeroPadMonth(expMonth)}/${expYear % 100}`;
-
-  return <div className="topup-existing-card">
-      <h4>Please check this is the card you want to top up <Currency amount={amount} /> from</h4>
+const CardTemplate = ({ header, brand, last4, expiry, amount, newLinkText, buttonType, onClick }) =>
+  <div className="topup-existing-card">
+      <h4>{header}</h4>
       <div className="topup-existing-card-container">
         <div className="topup-existing-card-image">
           <div className="topup-existing-card-image-background" />
@@ -32,38 +30,42 @@ const TopupCard = ({ cardDetails: { brand, last4, expMonth, expYear }, amount, p
           <p className="topup-existing-card-image-expiry" style={{ color: LIGHT_TEXT }}>{expiry}</p>
         </div>
         <p>
-          <Link to={`/topup/${amount}/new`} style={{ color: BRAND_LIGHT }}>Add a different card</Link>
+          <Link to={`/topup/${amount}/new`} style={{ color: BRAND_LIGHT }}>{newLinkText}</Link>
         </p>
       </div>
       <p className="topup-existing-card-topup">
-        <Button onClick={() => performTopup({ amount })}>Confirm <Currency amount={amount} /> Top Up</Button>
+        <Button type={buttonType} onClick={onClick}>Confirm <Currency amount={amount} /> Top Up</Button>
       </p>
     </div>;
+
+const TopupCard = ({ cardDetails: { brand, last4, expMonth, expYear }, amount, performTopup }) => {
+  const expiry = `${zeroPadMonth(expMonth)}/${expYear % 100}`;
+
+  return (
+    <CardTemplate
+      header={<span>Please check this is the card you want to top up <Currency amount={amount} /> from</span>}
+      brand={brand}
+      last4={last4}
+      expiry={expiry}
+      amount={amount}
+      newLinkText='Add a different card'
+      buttonType='enabled'
+      onClick={() => performTopup({ amount })}
+    />
+  );
 };
 
 const NewCard = ({ amount }) =>
-  <div className="topup-existing-card">
-      <h4>No card details to top up <Currency amount={amount} /> from - please add a new card</h4>
-      <div className="topup-existing-card-container">
-        <div className="topup-existing-card-image">
-          <div className="topup-existing-card-image-background" />
-          <div className='visa' />
-          <p className="topup-existing-card-image-number" style={{ color: MUTED_TEXT }}>
-            <span>****</span>
-            <span>****</span>
-            <span>****</span>
-            <span>****</span>
-          </p>
-          <p className="topup-existing-card-image-expiry" style={{ color: LIGHT_TEXT }}>00/00</p>
-        </div>
-        <p>
-          <Link to={`/topup/${amount}/new`} style={{ color: BRAND_LIGHT }}>Add a new card</Link>
-        </p>
-      </div>
-      <p className="topup-existing-card-topup">
-        <Button type='disabled'>Confirm <Currency amount={amount} /> Top Up</Button>
-      </p>
-    </div>;
+    <CardTemplate
+      header={<span>No card details to top up <Currency amount={amount} /> from - please add a new card</span>}
+      brand='visa'
+      last4='****'
+      expiry='00/00'
+      amount={amount}
+      newLinkText='Add a new card'
+      buttonType='disabled'
+      onClick={() => {}}
+    />;
 
 const TopupPrompt = ({ amount, cardDetails, performTopup }) =>
   <Page left={<Back>Balance</Back>}
