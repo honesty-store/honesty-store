@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import isUUID = require('validator/lib/isUUID');
 import * as stripeFactory from 'stripe';
 
+import { UserError } from '../../service/src/errorDefinitions';
 import { Key } from '../../service/src/key';
 import { error, info } from '../../service/src/log';
 import { serviceAuthentication, serviceRouter } from '../../service/src/router';
@@ -140,6 +141,36 @@ const appendTopupTransaction = async ({ key, topupAccount, amount, data }
   }
 };
 
+const stripeCodeToErrorCode = (stripeCode) => {
+  switch (stripeCode) {
+    case 'incorrect_number':      return 'CardInvalidCCNumber';
+    case 'invalid_number':        return 'CardInvalidCCNumber';
+    case 'invalid_expiry_month':  return 'CardInvalidExpiryMonth';
+    case 'invalid_expiry_year':   return 'CardInvalidExpiryYear';
+    case 'invalid_cvc':           return 'CardInvalidCVC';
+    case 'expired_card':          return 'CardExpired';
+    case 'incorrect_cvc':         return 'CardInvalidSecurityCode';
+    case 'card_declined':         return 'CardDeclined';
+
+    case 'incorrect_zip':
+    case 'missing':
+    case 'processing_error':
+      // fall through
+    default:
+      return 'CardErrorGeneric';
+  }
+};
+
+const userErrorFromStripeError = (stripeError) => {
+  if (stripeError.type !== 'card_error') {
+    return stripeError;
+  }
+
+  // we could just marshal stripeError.message to the user, but it might not fit the tone of our app
+  const errorCode = stripeCodeToErrorCode(stripeError.code);
+  return new UserError(errorCode, stripeError.message);
+};
+
 const createStripeCharge = async ({ key, topupAccount, amount }: { key: Key, topupAccount: TopupAccount, amount: number }) => {
   try {
     return await stripeForUser(topupAccount).charges.create(
@@ -158,17 +189,20 @@ const createStripeCharge = async ({ key, topupAccount, amount }: { key: Key, top
       }
     );
   } catch (e) {
-    error(key, 'couldn\'t create stripe charge', e);
+    let detail = '';
+
     if (e.message === 'Must provide source or customer.') {
       /* Note to future devs: this error appears to be a bug with stripe's API.
        *
        * We've correctly provided a customer, so the error seems odd. I
        * believe it's to do with the idempotency_key being incorrect, so
        * that's the first place to start looking. */
-      throw new Error(`${e.message} (from topup: or the idempotency_key has already been used)`);
+      detail = ' (from topup: or the idempotency_key has already been used)';
     }
 
-    throw e;
+    error(key, `couldn\'t create stripe charge${detail}`, e);
+
+    throw userErrorFromStripeError(e);
   }
 };
 

@@ -4,6 +4,15 @@ export type ErrorCode =
   'TopupExceedsMaxBalance' |
   'TooManyPurchaseItems' |
   'EmailNotFound' |
+  'CardProviderError' |
+  'CardInvalidCCNumber' |
+  'CardInvalidExpiryMonth' |
+  'CardInvalidExpiryYear' |
+  'CardInvalidCVC' |
+  'CardExpired' |
+  'CardInvalidSecurityCode' |
+  'CardDeclined' |
+  'CardErrorGeneric' |
   'UnknownError';
 
 export class UserError extends Error {
