@@ -7,7 +7,7 @@ import * as stripeFactory from 'stripe';
 
 import { UserError } from '../../service/src/errorDefinitions';
 import { Key } from '../../service/src/key';
-import { error, info } from '../../service/src/log';
+import { error, info, warn } from '../../service/src/log';
 import { serviceAuthentication, serviceRouter } from '../../service/src/router';
 import { assertBalanceWithinLimit, createTransaction, TransactionDetails } from '../../transaction/src/client/index';
 import { CardDetails, TopupAccount, TopupRequest } from './client/index';
@@ -256,9 +256,9 @@ const topupExistingAccount = async ({ key, topupAccount, amount }: { key: Key, t
   };
 };
 
-const recordCustomerDetails = async ({ customer, topupAccount }): Promise<TopupAccount> => {
+const recordCustomerDetails = async ({ key, customer, topupAccount }): Promise<TopupAccount> => {
   if (stripeDetailsValid(topupAccount)) {
-    throw new Error(`Already have stripe details for '${topupAccount.accountId}'`);
+    warn(key, `recording new customer (card) details for topup account`, { topupAccount });
   }
 
   const newAccount = {
@@ -272,7 +272,7 @@ const recordCustomerDetails = async ({ customer, topupAccount }): Promise<TopupA
   return update({ topupAccount: newAccount });
 };
 
-const addStripeTokenToAccount = async ({ topupAccount, stripeToken }): Promise<TopupAccount> => {
+const addStripeTokenToAccount = async ({ key, topupAccount, stripeToken }): Promise<TopupAccount> => {
   const customer = await stripeForUser(topupAccount)
     .customers
     .create({
@@ -283,7 +283,7 @@ const addStripeTokenToAccount = async ({ topupAccount, stripeToken }): Promise<T
       }
     });
 
-  return await recordCustomerDetails({ customer, topupAccount });
+  return await recordCustomerDetails({ key, customer, topupAccount });
 };
 
 const assertValidTopupAmount = (amount) => {
@@ -299,10 +299,10 @@ const attemptTopup = async ({ key, accountId, userId, amount, stripeToken }: Top
 
   if (stripeToken) {
     if (stripeDetailsValid(topupAccount)) {
-      throw new Error(`Already have stripe details for '${accountId}'`);
+      warn(key, `adding new customer (card) details for topup account`, { topupAccount, accountId, userId });
     }
 
-    topupAccount = await addStripeTokenToAccount({ topupAccount, stripeToken });
+    topupAccount = await addStripeTokenToAccount({ key, topupAccount, stripeToken });
   }
 
   return topupExistingAccount({ key, topupAccount, amount });
