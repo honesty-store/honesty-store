@@ -24,11 +24,12 @@ const unpackCardErrors = ({ validationError, backendError }) => {
     };
 
   } else if (backendError) {
-    return {
-      errorMessage: codeIsCardProviderError(backendError.code)
-        ? errorDefinitions[backendError.code].message
-        : errorDefinitions['CardError'].message,
+    const errorDefinition = (codeIsCardProviderError(backendError.code)
+      && errorDefinitions[backendError.code])
+      || errorDefinitions['CardError'];
 
+    return {
+      errorMessage: errorDefinition.message,
       bogusParameterName: paramFromCardProviderError(backendError)
     };
   }
