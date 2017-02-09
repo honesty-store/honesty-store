@@ -273,15 +273,23 @@ const recordCustomerDetails = async ({ key, customer, topupAccount }): Promise<T
 };
 
 const addStripeTokenToAccount = async ({ key, topupAccount, stripeToken }): Promise<TopupAccount> => {
-  const customer = await stripeForUser(topupAccount)
-    .customers
-    .create({
-      source: stripeToken,
-      description: `registration for ${topupAccount.accountId}`,
-      metadata: {
-        accountId: topupAccount.accountId
-      }
-    });
+  let customer;
+
+  try {
+    customer = await stripeForUser(topupAccount)
+      .customers
+      .create({
+        source: stripeToken,
+        description: `registration for ${topupAccount.accountId}`,
+        metadata: {
+          accountId: topupAccount.accountId
+        }
+      });
+  } catch (e) {
+    error(key, `couldn\'t create stripe customer`, { e, topupAccount });
+
+    throw userErrorFromStripeError(e);
+  }
 
   return await recordCustomerDetails({ key, customer, topupAccount });
 };
