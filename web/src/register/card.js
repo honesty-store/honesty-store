@@ -70,12 +70,15 @@ class Card extends React.Component {
     const { error } = this.props;
     const { number, exp, cvc } = this.state;
 
-    const errorMessage =
-      codeIsCardProviderError(error.code)
-      ? errorDefinitions[error.code].humanReadableString
-      : error.message;
 
-    error.param = paramFromCardProviderError(error);
+    let errorMessage = undefined;
+    if (error) {
+      errorMessage = codeIsCardProviderError(error.code)
+        ? errorDefinitions[error.code].humanReadableString
+        : error.message;
+
+      error.param = paramFromCardProviderError(error);
+    }
 
     return <Page left={<Back>Register</Back>}
       title={`Top Up`}
