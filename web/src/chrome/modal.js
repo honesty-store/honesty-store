@@ -33,7 +33,7 @@ const Modal = ({
 
 const defaultSubtitle = 'Oops! Something went wrong...';
 const retryTitle = 'Can you try that again, please?';
-const failureTitle = 'I\'m afraid I can\'t let you do that, Dave';
+const failureTitle = "I'm afraid I can't let you do that, Dave";
 
 const ErrorInternal = ({
   title = retryTitle,
