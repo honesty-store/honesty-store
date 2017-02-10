@@ -25,7 +25,7 @@ const getUserSessionData = async (key, user) => {
   const allTransactions = accountID ? await getTransactionHistory({ key, accountID }) : [];
   const recentTransactions = allTransactions.slice(0, 10);
 
-  let cardDetails;
+  let cardDetails = null;
   if (userRegistered(user)) {
     try {
       cardDetails = await getCardDetails(key, id);
@@ -35,12 +35,7 @@ const getUserSessionData = async (key, user) => {
       }
 
       /* User is registered but has no card details - this means they managed
-       * to sign up but weren't successful in their initial topup.
-       *
-       * Returning undefined cardDetails will push the frontend/web into
-       * retrying the topup.
-       */
-      cardDetails = undefined;
+       * to sign up but weren't successful in their initial topup. */
     }
   }
 
