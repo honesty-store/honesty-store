@@ -1,21 +1,19 @@
 // this is duplicated in typescript @ service/src/errorDefinitions.ts
 
-const cardErrorString = 'Hit a problem with your card details';
-
 export const errorDefinitions = {
   TopupExceedsMaxBalance: { message: 'Topping up would exceed your maximum balance', retryable: false },
   TooManyPurchaseItems: { message: "You're purchasing too many items", retryable: false },
   EmailNotFound: { message: "Couldn't find your email", retryable: true }, // this should be handled transparently
   NoCardDetailsPresent: { message: 'We have no card details for you', retryable: true }, // this should be handled transparently
-  CardIncorrectNumber: { message: cardErrorString, retryable: true },
-  CardInvalidNumber: { message: cardErrorString, retryable: true },
-  CardInvalidExpiryMonth: { message: cardErrorString, retryable: true },
-  CardInvalidExpiryYear: { message: cardErrorString, retryable: true },
-  CardIncorrectCVC: { message: cardErrorString, retryable: true },
-  CardInvalidCVC: { message: cardErrorString, retryable: true },
-  CardExpired: { message: cardErrorString, retryable: true },
-  CardDeclined: { message: cardErrorString, retryable: true },
-  CardError: { message: cardErrorString, retryable: true }
+  CardIncorrectNumber: { message: 'Incorrect card number', retryable: true },
+  CardInvalidNumber: { message: 'Invalid card number', retryable: true },
+  CardInvalidExpiryMonth: { message: 'Invalid expiry month', retryable: true },
+  CardInvalidExpiryYear: { message: 'Invalid expiry year', retryable: true },
+  CardIncorrectCVC: { message: 'Incorrect CVC', retryable: true },
+  CardInvalidCVC: { message: 'Invalid CVC', retryable: true },
+  CardExpired: { message: 'Card expired', retryable: true },
+  CardDeclined: { message: 'Card declined', retryable: true },
+  CardError: { message: 'Hit a problem with your card details', retryable: true }
 };
 
 export const codeIsCardProviderError = code => code.startsWith('Card');
