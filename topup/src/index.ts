@@ -7,7 +7,7 @@ import * as stripeFactory from 'stripe';
 
 import { UserError } from '../../service/src/errorDefinitions';
 import { Key } from '../../service/src/key';
-import { error, info, warn } from '../../service/src/log';
+import { error, info } from '../../service/src/log';
 import { serviceAuthentication, serviceRouter } from '../../service/src/router';
 import { assertBalanceWithinLimit, createTransaction, TransactionDetails } from '../../transaction/src/client/index';
 import { CardDetails, TopupAccount, TopupRequest } from './client/index';
@@ -258,9 +258,9 @@ const topupExistingAccount = async ({ key, topupAccount, amount }: { key: Key, t
   };
 };
 
-const recordCustomerDetails = async ({ key, customer, topupAccount }): Promise<TopupAccount> => {
+const recordCustomerDetails = async ({ customer, topupAccount }): Promise<TopupAccount> => {
   if (stripeDetailsValid(topupAccount)) {
-    warn(key, `recording new customer (card) details for topup account`, { topupAccount });
+    throw new Error(`Already have stripe details for '${topupAccount.accountId}'`);
   }
 
   const newAccount = {
@@ -293,7 +293,7 @@ const addStripeTokenToAccount = async ({ key, topupAccount, stripeToken }): Prom
     throw userErrorFromStripeError(e);
   }
 
-  return await recordCustomerDetails({ key, customer, topupAccount });
+  return await recordCustomerDetails({ customer, topupAccount });
 };
 
 const assertValidTopupAmount = (amount) => {
@@ -309,7 +309,7 @@ const attemptTopup = async ({ key, accountId, userId, amount, stripeToken }: Top
 
   if (stripeToken) {
     if (stripeDetailsValid(topupAccount)) {
-      warn(key, `adding new customer (card) details for topup account`, { topupAccount, accountId, userId });
+      throw new Error(`Already have stripe details for '${accountId}'`);
     }
 
     topupAccount = await addStripeTokenToAccount({ key, topupAccount, stripeToken });
