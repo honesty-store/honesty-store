@@ -12,7 +12,7 @@ export const performTemplate = ({
     const token = getToken && getToken(getState);
     const response = await fetch(url, {
       method: 'POST',
-      body: createBody ? JSON.stringify(await createBody()) : undefined,
+      body: createBody && JSON.stringify(await createBody()),
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer: ${token}` } : {})
