@@ -28,15 +28,15 @@ const register2 = async (key, { userID, emailAddress, topUpAmount, itemID, strip
   let purchaseTx: TransactionAndBalance = null;
   if (itemID != null) {
     try {
-    purchaseTx = await purchase({
-      key,
-      itemID,
-      userID,
-      quantity: 1,
-      accountID: user.accountId,
-      storeID: user.defaultStoreId
-    });
-  } catch (e) {
+      purchaseTx = await purchase({
+        key,
+        itemID,
+        userID,
+        quantity: 1,
+        accountID: user.accountId,
+        storeID: user.defaultStoreId
+      });
+    } catch (e) {
       /* We don't want to fail if the item could not be purchased, however the client
         is expected to assert that a transaction exists for the item and alert the user
         appropriately if one doesn't. */
