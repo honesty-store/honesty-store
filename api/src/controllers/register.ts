@@ -26,7 +26,8 @@ const register2 = async (key, { userID, emailAddress, topUpAmount, itemID, strip
   const topupTx = await createTopup(key, { accountId: user.accountId, userId: user.id, amount: topUpAmount, stripeToken });
 
   let purchaseTx: TransactionAndBalance = null;
-  try {
+  if (itemID != null) {
+    try {
     purchaseTx = await purchase({
       key,
       itemID,
@@ -36,10 +37,11 @@ const register2 = async (key, { userID, emailAddress, topUpAmount, itemID, strip
       storeID: user.defaultStoreId
     });
   } catch (e) {
-    /* We don't want to fail if the item could not be purchased, however the client
-       is expected to assert that a transaction exists for the item and alert the user
-       appropriately if one doesn't. */
-    error(key, `couldn't purchase item ${itemID}`, e);
+      /* We don't want to fail if the item could not be purchased, however the client
+        is expected to assert that a transaction exists for the item and alert the user
+        appropriately if one doesn't. */
+      error(key, `couldn't purchase item ${itemID}`, e);
+    }
   }
 
   return {
