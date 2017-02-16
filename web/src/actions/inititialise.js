@@ -32,4 +32,5 @@ export const performInitialise = ({ storeCode, emailToken }) => async (dispatch,
     dispatch(initialise());
     return dispatch(performRegister({ storeCode }));
   }
+  browserHistory.replace(`/`);
 };
