@@ -93,7 +93,7 @@ export const storeList = () => Array.from(stores.keys());
 export const storeIDToStoreCode = (storeID) => storeID;
 export const storeCodeToStoreID = (storeCode) => storeCode;
 
-const getStore = (storeCode) => {
+export const getStore = (storeCode) => {
   const store = stores.get(storeCode);
   if (store == null) {
     throw new Error(`Store does not exist with code '${storeCode}'`);

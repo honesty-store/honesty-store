@@ -1,4 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
+
+import { getStore, storeList } from '../../../api/src/services/store';
+
 interface TemplateArgument {
   readCapacityUnits: number;
   writeCapacityUnits: number;
@@ -10,6 +13,40 @@ interface TableTemplate {
   config: DynamoDB.CreateTableInput;
   data: any;
 }
+
+interface BoxData {
+  id: string;
+  items: {
+    itemId: string;
+    count: number;
+  }[];
+  packed: string;
+  shipped: string;
+  recieved: string;
+}
+
+const keepConsecutiveUnique = (id, index, arr) =>
+  index === 0 || arr[index - 1] !== id;
+
+const boxIds = storeList()
+  .map(getStore)
+  .map(store => store.boxIds)
+  .reduce((ar, ids) => [...ar, ...ids], []);
+
+const itemIds = storeList()
+  .map(getStore)
+  .map(store => Object.keys(store.itemPrices))
+  .sort()
+  .filter(keepConsecutiveUnique);
+
+const dummyBoxData: BoxData[] = boxIds
+  .map(id => ({
+    id,
+    items: itemIds.map(itemId => ({ itemId, count: 3 })),
+    packed: '20170130',
+    shipped: '20170130',
+    recieved: '20170130'
+  }));
 
 const template = ({
   readCapacityUnits,
@@ -137,7 +174,7 @@ const dirToTable = {
   box: ({ readCapacityUnits, writeCapacityUnits }) => template({
     readCapacityUnits,
     writeCapacityUnits,
-    dummyData: []
+    dummyData: dummyBoxData
   })
 };
 

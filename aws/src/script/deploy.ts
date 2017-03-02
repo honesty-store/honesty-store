@@ -21,7 +21,7 @@ export const ecsServiceRole = 'arn:aws:iam::812374064424:role/ecs-service-role';
 export const ensureWebStack = async () =>
   await ensureStack({
     name: 'web-cluster',
-    templateName: `${__dirname}/../../cloudformation/web-cluster.json`,
+    templateName: `${__dirname}/../../../../cloudformation/web-cluster.json`,
     params: {
       AmiImageId: 'ami-a7f2acc1',
       SubnetACidrBlock: '10.1.0.0/24',
