@@ -1,5 +1,9 @@
-export const baseUrl = process.env.BASE_URL;
+export const getBaseUrl = () => {
+  const baseUrl = process.env.BASE_URL;
 
-if (!baseUrl) {
-  throw new Error('no $BASE_URL provided');
-}
+  if (!baseUrl) {
+    throw new Error('no $BASE_URL provided');
+  }
+
+  return baseUrl;
+};
