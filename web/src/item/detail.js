@@ -161,7 +161,7 @@ const mapStateToProps = (
   })();
   const { balance } = user;
   return {
-    item: item,
+    item,
     balance,
     registered: isRegistered(user),
   };
