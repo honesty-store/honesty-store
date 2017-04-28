@@ -8,7 +8,10 @@ import {
   AccountAndTransactions, balanceLimit, InternalAccount,
   TEST_DATA_EMPTY_ACCOUNT_ID, TransactionAndBalance, TransactionDetails
 } from './client';
-import { assertValidTransaction, createTransactionId, getTransactions, hashTransaction, putTransaction } from './transaction';
+import {
+  assertRefundableTransaction, assertValidTransaction, createTransactionId,
+  extractFieldsFromTransactionId, getTransaction, getTransactions, hashTransaction, putTransaction
+} from './transaction';
 
 const ACCOUNT_TRANSACTION_CACHE_SIZE = 10;
 const GET_TRANSACTION_LIMIT = 10;
@@ -85,6 +88,27 @@ const createTransaction = async ({ accountId, type, amount, data }): Promise<Tra
   };
 };
 
+const refundTransaction = async (transactionId: string) => {
+  const { accountId } = extractFieldsFromTransactionId(transactionId);
+  const { transactionHead } = await getAccountInternal({ accountId });
+
+  const transactionToRefund = await getTransaction(transactionId);
+  await assertRefundableTransaction(transactionToRefund, transactionHead);
+
+  const response = await createTransaction({
+    accountId,
+    type: 'refund',
+    amount: -transactionToRefund.amount,
+    data: {
+      refundedTransactionId: transactionToRefund.id
+    }
+  });
+  return {
+    balance: response.balance,
+    transaction: response.transaction
+  };
+};
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -112,6 +136,18 @@ router.post(
     const { transactionHead, cachedTransactions, ...externalAccount } = internalAccount;
     return externalAccount;
   }
+);
+
+router.get(
+  '/tx/:transactionId',
+  serviceAuthentication,
+  async (_key, { transactionId }) => await getTransaction(transactionId)
+);
+
+router.post(
+  '/tx/:transactionId/refund',
+  serviceAuthentication,
+  async (_key, { transactionId }) => await refundTransaction(transactionId)
 );
 
 app.use(router);
