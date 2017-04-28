@@ -92,20 +92,20 @@ app.use(bodyParser.json());
 const router = serviceRouter('transaction', 1);
 
 router.get(
-  '/:accountId',
+  '/account/:accountId',
   serviceAuthentication,
   async (_key, { accountId }) => await getAccountAndTransactions({ accountId })
 );
 
 router.post(
-  '/:accountId',
+  '/account/:accountId',
   serviceAuthentication,
   async (_key, { accountId }, { type, amount, data }) =>
     await createTransaction({ accountId, type, amount, data })
 );
 
 router.post(
-  '/',
+  '/account',
   serviceAuthentication,
   async (_key, {}, { accountId }) => {
     const internalAccount = await createAccount({ accountId });
