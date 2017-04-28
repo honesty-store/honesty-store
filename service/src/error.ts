@@ -23,6 +23,7 @@ export type ErrorCode =
   'ItemNotInBox' |
   'BoxAlreadyMarkedAsReceived' |
   'FullRegistrationRequired' |
+  'RefundRequestPeriodExpired' |
   'UnknownError';
 
 export class CodedError extends Error {
