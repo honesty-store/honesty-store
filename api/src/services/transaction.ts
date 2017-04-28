@@ -1,6 +1,7 @@
+import * as moment from 'moment';
 import { getItem } from '../../../item/src/client';
 import { CodedError } from '../../../service/src/error';
-import { createTransaction, getAccount, TransactionBody } from '../../../transaction/src/client/index';
+import { createTransaction, getAccount, getTransaction, refundTransaction, TransactionBody } from '../../../transaction/src/client/index';
 import { getItemPriceFromStore } from './store';
 
 const expandItemDetails = async (key, transaction) => {
@@ -33,6 +34,17 @@ const assertValidQuantity = (quantity) => {
   }
 };
 
+const assertTransactionIsRefundable = async (key, transactionId, userId) => {
+  const { timestamp, data: { userId: transactionUserId } } = await getTransaction(key, transactionId);
+  const refundCutOffDate = moment().subtract(1, 'hours').unix();
+  if (timestamp < refundCutOffDate) {
+    throw new CodedError('RefundRequestPeriodExpired', 'Refunds can only be requested up to 1 hour after initial purchase');
+  }
+  if (!transactionUserId || transactionUserId !== userId) {
+    throw new Error(`userId contained within transaction ${transactionId} does not match id of user requesting refund (${userId})`);
+  }
+};
+
 export const purchase = async ({ key, itemID, userID, accountID, storeID, quantity }) => {
   assertValidQuantity(quantity);
 
@@ -54,6 +66,11 @@ export const purchase = async ({ key, itemID, userID, accountID, storeID, quanti
     balance: response.balance,
     transaction: await expandItemDetails(key, response.transaction)
   };
+};
+
+export const refund = async ({ key, transactionId, userId }) => {
+  await assertTransactionIsRefundable(key, transactionId, userId);
+  return await refundTransaction(key, transactionId);
 };
 
 export const getExpandedTransactionsAndBalance = async ({ key, accountID, page = 0 }) => {
