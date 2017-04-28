@@ -4,7 +4,7 @@ import fetch from '../../../service/src/fetch';
 export const balanceLimit = 1000; // £10
 
 export interface TransactionBody {
-  type: 'topup' | 'purchase';
+  type: 'topup' | 'purchase' | 'refund';
   amount: number;
   data: {
     [key: string]: string;
@@ -19,6 +19,12 @@ export interface TransactionDetails extends TransactionBody {
 
 export interface Transaction extends TransactionDetails {
   id: string;
+}
+
+export interface RefundTransactionBody extends TransactionBody {
+  data: {
+    refundedTransactionId: string;
+  };
 }
 
 export interface Account {
@@ -51,6 +57,12 @@ export const getAccount = (key, accountId: string) =>
 
 export const createTransaction = (key, accountId: string, transaction: TransactionBody) =>
   post<TransactionAndBalance>(1, key, `/account/${accountId}`, transaction);
+
+export const getTransaction = (key, transactionId: string) =>
+  get<Transaction>(1, key, `/tx/${transactionId}`);
+
+export const refundTransaction = (key, transactionId: string) =>
+  post<TransactionAndBalance>(1, key, `/tx/${transactionId}/refund`, {});
 
 export const assertBalanceWithinLimit = async ({ key, accountId, amount }) => {
   const currentBalance = (await getAccount(key, accountId)).balance;
