@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import stringify = require('json-stable-stringify');
 import isUUID = require('validator/lib/isUUID');
 
-import { InternalTransaction, Transaction, TransactionDetails } from './client';
+import { InternalTransaction, RefundTransactionBody, Transaction, TransactionBody, TransactionDetails } from './client';
 
 const isSHA256 = (hash) => /^[a-f0-9]{64}$/.test(hash);
 
@@ -16,6 +16,8 @@ export const extractFieldsFromTransactionId = (id: string) => {
     ...rest
   };
 };
+
+const isRefundTransactionBody = (body: TransactionBody): body is RefundTransactionBody => body.type === 'refund';
 
 const assertValidTransactionId = (id) => {
   const { accountId, transactionId, ...rest } = extractFieldsFromTransactionId(id);
@@ -100,7 +102,7 @@ export const assertRefundableTransaction = async ({ id, type }, transactionHead)
   }
 
   await walkTransactions(transactionHead, (transaction) => {
-    if (transaction.type === 'refund' && transaction.data['refundedTransactionId'] === id) {
+    if (isRefundTransactionBody(transaction) && transaction.refundedTransactionId === id) {
       throw new Error(`Refund already issued for transactionId ${id}`);
     }
     return transaction.id === id;

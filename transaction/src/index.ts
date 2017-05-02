@@ -5,8 +5,9 @@ import express = require('express');
 import { serviceAuthentication, serviceRouter } from '../../service/src/router';
 import { assertValidAccountId, createAccount, getAccountInternal, updateAccount } from './account';
 import {
-  AccountAndTransactions, balanceLimit, InternalAccount,
-  TEST_DATA_EMPTY_ACCOUNT_ID, TransactionAndBalance, TransactionDetails
+  AccountAndTransactions, balanceLimit, InternalAccount, RefundTransactionBody,
+  TEST_DATA_EMPTY_ACCOUNT_ID, TransactionAndBalance, TransactionBody,
+  TransactionDetails
 } from './client';
 import {
   assertRefundableTransaction, assertValidTransaction, createTransactionId,
@@ -41,17 +42,15 @@ const getAccountAndTransactions = async ({ accountId, limit = GET_TRANSACTION_LI
   };
 };
 
-const createTransaction = async ({ accountId, type, amount, data }): Promise<TransactionAndBalance> => {
+const createTransaction = async (accountId, body: TransactionBody | RefundTransactionBody): Promise<TransactionAndBalance> => {
   assertValidAccountId(accountId);
 
   const originalAccount = await getAccountInternal({ accountId });
 
   const transactionDetails: TransactionDetails = {
     timestamp: Date.now(),
-    type,
-    amount,
-    data,
-    next: originalAccount.transactionHead
+    next: originalAccount.transactionHead,
+    ...body
   };
 
   const transaction = {
@@ -95,14 +94,15 @@ const refundTransaction = async (transactionId: string) => {
   const transactionToRefund = await getTransaction(transactionId);
   await assertRefundableTransaction(transactionToRefund, transactionHead);
 
-  const response = await createTransaction({
+  const response = await createTransaction(
     accountId,
-    type: 'refund',
-    amount: -transactionToRefund.amount,
-    data: {
+    {
+      type: 'refund',
+      amount: -transactionToRefund.amount,
+      data: {},
       refundedTransactionId: transactionToRefund.id
     }
-  });
+  );
   return {
     balance: response.balance,
     transaction: response.transaction
@@ -125,7 +125,7 @@ router.post(
   '/account/:accountId',
   serviceAuthentication,
   async (_key, { accountId }, { type, amount, data }) =>
-    await createTransaction({ accountId, type, amount, data })
+    await createTransaction(accountId, { type, amount, data })
 );
 
 router.post(
