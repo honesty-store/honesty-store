@@ -105,7 +105,7 @@ export const assertRefundableTransaction = async ({ id, type }, transactionHead)
     if (isRefundTransactionBody(transaction) && transaction.refundedTransactionId === id) {
       throw new Error(`Refund already issued for transactionId ${id}`);
     }
-    return transaction.id === id;
+    return transaction.id !== id;
   });
 };
 
