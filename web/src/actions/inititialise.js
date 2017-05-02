@@ -47,4 +47,5 @@ export const performInitialise = ({ pathname, storeCode, emailToken }) => async 
   if (storeCode != null) {
     return dispatch(performRegister({ storeCode }));
   }
+  browserHistory.replace(`/`);
 };
