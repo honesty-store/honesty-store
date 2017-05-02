@@ -13,18 +13,16 @@ export interface TransactionBody {
   legacyId?: string;
 }
 
+export interface RefundTransactionBody extends TransactionBody {
+  refundedTransactionId: string;
+}
+
 export interface TransactionDetails extends TransactionBody {
   timestamp: number;
 }
 
 export interface Transaction extends TransactionDetails {
   id: string;
-}
-
-export interface RefundTransactionBody extends TransactionBody {
-  data: {
-    refundedTransactionId: string;
-  };
 }
 
 export interface Account {
