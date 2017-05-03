@@ -38,7 +38,7 @@ const assertUserCanAutoRefundTransaction = async (key, transactionId, userId) =>
   const { timestamp, data: { userId: transactionUserId } } = await getTransaction(key, transactionId);
   const refundCutOffDate =  ms('1h');
   if (timestamp < refundCutOffDate) {
-    throw new CodedError('RefundRequestPeriodExpired', 'Refunds can only be requested up to 1 hour after initial purchase');
+    throw new CodedError('AutoRefundPeriodExpired', 'Refunds can only be requested up to 1 hour after initial purchase');
   }
   if (!transactionUserId || transactionUserId !== userId) {
     throw new Error(`userId contained within transaction ${transactionId} does not match id of user requesting refund (${userId})`);
