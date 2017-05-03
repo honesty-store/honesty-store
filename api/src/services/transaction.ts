@@ -40,7 +40,7 @@ const assertUserCanAutoRefundTransaction = (userId, transaction) => {
   if (timestamp < refundCutOffDate) {
     throw new CodedError('AutoRefundPeriodExpired', 'Refunds can only be requested up to 1 hour after initial purchase');
   }
-  if (!transactionUserId || transactionUserId !== userId) {
+  if (transactionUserId == null || transactionUserId !== userId) {
     throw new Error(`userId contained within transaction ${transactionId} does not match id of user requesting refund (${userId})`);
   }
 };
