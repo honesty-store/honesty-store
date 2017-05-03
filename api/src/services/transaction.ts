@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import * as ms from 'ms';
 import { getItem } from '../../../item/src/client';
 import { CodedError } from '../../../service/src/error';
 import { createTransaction, getAccount, getTransaction, refundTransaction, TransactionBody } from '../../../transaction/src/client/index';
@@ -36,7 +36,7 @@ const assertValidQuantity = (quantity) => {
 
 const assertTransactionIsRefundable = async (key, transactionId, userId) => {
   const { timestamp, data: { userId: transactionUserId } } = await getTransaction(key, transactionId);
-  const refundCutOffDate = moment().subtract(1, 'hours').unix();
+  const refundCutOffDate =  ms('1h');
   if (timestamp < refundCutOffDate) {
     throw new CodedError('RefundRequestPeriodExpired', 'Refunds can only be requested up to 1 hour after initial purchase');
   }
