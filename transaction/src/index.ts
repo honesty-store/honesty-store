@@ -15,7 +15,7 @@ const GET_TRANSACTION_LIMIT = 10;
 
 config.region = process.env.AWS_REGION;
 
-const getAccountAndTransactions = async ({ accountId, limit = GET_TRANSACTION_LIMIT }): Promise<AccountAndTransactions> => {
+const getAccountAndTransactions = async ({ accountId, limit }): Promise<AccountAndTransactions> => {
   assertValidAccountId(accountId);
 
   const { transactionHead, cachedTransactions, ...externalAccount } = await getAccountInternal({ accountId });
@@ -94,7 +94,11 @@ const router = serviceRouter('transaction', 1);
 router.get(
   '/:accountId',
   serviceAuthentication,
-  async (_key, { accountId }) => await getAccountAndTransactions({ accountId })
+  async (_key, { accountId }, _, { query: { limit } }) =>
+    await getAccountAndTransactions({
+      accountId,
+      limit: isNaN(limit) ? GET_TRANSACTION_LIMIT : Number(limit)
+    })
 );
 
 router.post(
@@ -107,7 +111,7 @@ router.post(
 router.post(
   '/',
   serviceAuthentication,
-  async (_key, {}, { accountId }) => {
+  async (_key, { }, { accountId }) => {
     const internalAccount = await createAccount({ accountId });
     const { transactionHead, cachedTransactions, ...externalAccount } = internalAccount;
     return externalAccount;
@@ -118,7 +122,10 @@ app.use(router);
 
 // send healthy response to load balancer probes
 app.get('/', (_req, res) => {
-  getAccountAndTransactions({ accountId: TEST_DATA_EMPTY_ACCOUNT_ID })
+  getAccountAndTransactions({
+    accountId: TEST_DATA_EMPTY_ACCOUNT_ID,
+    limit: ACCOUNT_TRANSACTION_CACHE_SIZE
+  })
     .then(() => {
       res.sendStatus(200);
     })

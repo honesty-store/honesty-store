@@ -46,8 +46,8 @@ const { get, post } = fetch('transaction');
 export const createAccount = (key, accountId: string) =>
   post<AccountAndTransactions>(1, key, '/', { accountId });
 
-export const getAccount = (key, accountId: string) =>
-  get<AccountAndTransactions>(1, key, `/${accountId}`);
+export const getAccount = (key, accountId: string, limit?: number) =>
+  get<AccountAndTransactions>(1, key, `/${accountId}?limit=${limit}`);
 
 export const createTransaction = (key, accountId: string, transaction: TransactionBody) =>
   post<TransactionAndBalance>(1, key, `/${accountId}`, transaction);
