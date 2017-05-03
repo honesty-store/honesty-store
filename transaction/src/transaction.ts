@@ -43,7 +43,7 @@ export const hashTransaction = (transaction: TransactionDetails) => {
   return hash.digest('hex');
 };
 
-export const assertValidTransaction = async ({ type, amount, data, id }: Transaction) => {
+export const assertValidTransaction = async ({ type, amount, data, id, other, next, legacyId, timestamp, ...rest }: Transaction) => {
   assertValidTransactionId(id);
   if (type == null || (type !== 'topup' && type !== 'purchase' && type !== 'refund')) {
     throw new Error(`Invalid transaction type ${type}`);
@@ -62,7 +62,21 @@ export const assertValidTransaction = async ({ type, amount, data, id }: Transac
       throw new Error(`Invalid transaction data ${JSON.stringify(data)}`);
     }
   }
-  // check other is a transaction id
+  if (other != null) {
+    assertValidTransactionId(other);
+  }
+  if (next != null) {
+    assertValidTransactionId(next);
+  }
+  if (legacyId != null) {
+    assertValidTransactionId(legacyId);
+  }
+  if (!Number.isInteger(timestamp)) {
+    throw new Error(`Non-intergral timestamp ${timestamp}`);
+  }
+  if (Object.keys(rest).length !== 0) {
+    throw new Error('Invalid transaction properties supplied');
+  }
 };
 
 export const getTransaction = async (id) => {
