@@ -34,8 +34,8 @@ const assertValidQuantity = (quantity) => {
   }
 };
 
-const assertUserCanAutoRefundTransaction = async (key, transactionId, userId) => {
-  const { timestamp, data: { userId: transactionUserId } } = await getTransaction(key, transactionId);
+const assertUserCanAutoRefundTransaction = (userId, transaction) => {
+  const { id: transactionId, timestamp, data: { userId: transactionUserId } } = transaction;
   const refundCutOffDate =  ms('1h');
   if (timestamp < refundCutOffDate) {
     throw new CodedError('AutoRefundPeriodExpired', 'Refunds can only be requested up to 1 hour after initial purchase');
@@ -69,7 +69,8 @@ export const purchase = async ({ key, itemID, userID, accountID, storeID, quanti
 };
 
 export const refund = async ({ key, transactionId, userId }) => {
-  await assertUserCanAutoRefundTransaction(key, transactionId, userId);
+  const transaction = await getTransaction(key, transactionId);
+  assertUserCanAutoRefundTransaction(userId, transaction);
   return await refundTransaction(key, transactionId);
 };
 
