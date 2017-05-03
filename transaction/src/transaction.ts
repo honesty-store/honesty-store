@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import stringify = require('json-stable-stringify');
 import isUUID = require('validator/lib/isUUID');
 
-import { InternalTransaction, RefundTransactionBody, Transaction, TransactionBody, TransactionDetails } from './client';
+import { Transaction, TransactionDetails } from './client';
 
 const isSHA256 = (hash) => /^[a-f0-9]{64}$/.test(hash);
 
@@ -16,8 +16,6 @@ export const extractFieldsFromTransactionId = (id: string) => {
     ...rest
   };
 };
-
-const isRefundTransactionBody = (body: TransactionBody): body is RefundTransactionBody => body.type === 'refund';
 
 const assertValidTransactionId = (id) => {
   const { accountId, transactionId, ...rest } = extractFieldsFromTransactionId(id);
@@ -64,6 +62,7 @@ export const assertValidTransaction = async ({ type, amount, data, id }: Transac
       throw new Error(`Invalid transaction data ${JSON.stringify(data)}`);
     }
   }
+  // check other is a transaction id
 };
 
 export const getTransaction = async (id) => {
@@ -80,10 +79,10 @@ export const getTransaction = async (id) => {
     throw new Error(`Transaction not found ${id}`);
   }
 
-  return <InternalTransaction>item;
+  return <Transaction>item;
 };
 
-const walkTransactions = async (transactionId: string, shouldContinue: (transaction: InternalTransaction) => boolean) => {
+const walkTransactions = async (transactionId: string, shouldContinue: (transaction: Transaction) => boolean) => {
   const transaction = await getTransaction(transactionId);
   if (!transaction.next) {
     return;
@@ -102,7 +101,7 @@ export const assertRefundableTransaction = async ({ id, type }, transactionHead)
   }
 
   await walkTransactions(transactionHead, (transaction) => {
-    if (isRefundTransactionBody(transaction) && transaction.refundedTransactionId === id) {
+    if (transaction.type === 'refund' && transaction.other === id) {
       throw new Error(`Refund already issued for transactionId ${id}`);
     }
     return transaction.id !== id;
@@ -118,7 +117,7 @@ export const getTransactions = async ({ transactionId, limit = Infinity }): Prom
   return transactions;
 };
 
-export const putTransaction = async (transaction: InternalTransaction) => {
+export const putTransaction = async (transaction: Transaction) => {
   assertValidTransaction(transaction);
 
   await new DynamoDB.DocumentClient()

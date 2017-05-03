@@ -9,16 +9,13 @@ export interface TransactionBody {
   data: {
     [key: string]: string;
   };
-  next?: string;
   legacyId?: string;
-}
-
-export interface RefundTransactionBody extends TransactionBody {
-  refundedTransactionId: string;
+  other?: string;
 }
 
 export interface TransactionDetails extends TransactionBody {
   timestamp: number;
+  next?: string;
 }
 
 export interface Transaction extends TransactionDetails {
@@ -33,8 +30,6 @@ export interface Account {
 }
 
 export type InternalAccount = Account & { transactionHead?: string } & { cachedTransactions: TransactionList; };
-
-export type InternalTransaction = Transaction & { next?: string };
 
 export type TransactionList = Transaction[];
 

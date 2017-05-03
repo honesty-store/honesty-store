@@ -5,9 +5,9 @@ import express = require('express');
 import { serviceAuthentication, serviceRouter } from '../../service/src/router';
 import { assertValidAccountId, createAccount, getAccountInternal, updateAccount } from './account';
 import {
-  AccountAndTransactions, balanceLimit, InternalAccount, RefundTransactionBody,
-  TEST_DATA_EMPTY_ACCOUNT_ID, TransactionAndBalance, TransactionBody,
-  TransactionDetails
+  AccountAndTransactions, balanceLimit, InternalAccount,
+  TEST_DATA_EMPTY_ACCOUNT_ID, TransactionAndBalance,
+  TransactionBody, TransactionDetails
 } from './client';
 import {
   assertRefundableTransaction, assertValidTransaction, createTransactionId,
@@ -42,7 +42,10 @@ const getAccountAndTransactions = async ({ accountId, limit = GET_TRANSACTION_LI
   };
 };
 
-const createTransaction = async (accountId, body: TransactionBody | RefundTransactionBody): Promise<TransactionAndBalance> => {
+const createTransaction = async (
+  accountId: string,
+  body: TransactionBody,
+): Promise<TransactionAndBalance> => {
   assertValidAccountId(accountId);
 
   const originalAccount = await getAccountInternal({ accountId });
@@ -100,7 +103,7 @@ const refundTransaction = async (transactionId: string) => {
       type: 'refund',
       amount: -transactionToRefund.amount,
       data: {},
-      refundedTransactionId: transactionToRefund.id
+      other: transactionToRefund.id
     }
   );
   return {
