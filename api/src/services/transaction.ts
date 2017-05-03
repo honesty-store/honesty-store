@@ -34,7 +34,7 @@ const assertValidQuantity = (quantity) => {
   }
 };
 
-const assertTransactionIsRefundable = async (key, transactionId, userId) => {
+const assertUserCanAutoRefundTransaction = async (key, transactionId, userId) => {
   const { timestamp, data: { userId: transactionUserId } } = await getTransaction(key, transactionId);
   const refundCutOffDate =  ms('1h');
   if (timestamp < refundCutOffDate) {
@@ -69,7 +69,7 @@ export const purchase = async ({ key, itemID, userID, accountID, storeID, quanti
 };
 
 export const refund = async ({ key, transactionId, userId }) => {
-  await assertTransactionIsRefundable(key, transactionId, userId);
+  await assertUserCanAutoRefundTransaction(key, transactionId, userId);
   return await refundTransaction(key, transactionId);
 };
 
