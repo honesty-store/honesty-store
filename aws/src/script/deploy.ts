@@ -63,6 +63,9 @@ const serviceConfig = {
 const lambdaConfig = {
   item: {
     database: true
+  },
+  batch: {
+    database: true
   }
 };
 
