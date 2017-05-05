@@ -7,7 +7,11 @@
         "sourceMap": false,
         "outDir": "lib",
         "noUnusedParameters": true,
-        "noUnusedLocals": true
+        "noUnusedLocals": true,
+        "lib": [
+            "esnext",
+            "esnext.asynciterable"
+        ]
     },
     "include": [
         "src/**/*"
