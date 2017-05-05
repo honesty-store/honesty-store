@@ -1,5 +1,3 @@
-import { Batch, MARKETPLACE_ID } from '../';
-
 export const getBatch = (_key, batchId: string) => ({
   id: batchId,
   quantity: 1,
@@ -9,7 +7,7 @@ export const getBatch = (_key, batchId: string) => ({
   VATRate: 0.2
 });
 
-export const itemCostFromBatch = ({ id }: Batch) => Number(id);
+export const itemCostFromBatch = ({ id }) => Number(id);
 
-export const isMarketplaceBatch = ({ supplier }: Batch) =>
+export const isMarketplaceBatch = ({ supplier }) =>
   supplier === MARKETPLACE_ID;
