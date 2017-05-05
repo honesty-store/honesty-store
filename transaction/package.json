@@ -13,6 +13,7 @@
     "async-cache": "^1.1.0",
     "aws-sdk": "^2.7.10",
     "body-parser": "^1.15.2",
+    "core-js": "^2.4.1",
     "express": "^4.14.0",
     "http-status": "^0.2.5",
     "json-stable-stringify": "^1.0.1",
@@ -29,8 +30,8 @@
     "@types/uuid": "^2.0.29",
     "@types/validator": "^5.7.35",
     "@types/winston": "0.0.32",
-    "tslint": "^4.4.2",
+    "tslint": "4.5.1-dev.0",
     "tslint-microsoft-contrib": "^4.0.0",
-    "typescript": "2.1.5"
+    "typescript": "2.3.2"
   }
 }
