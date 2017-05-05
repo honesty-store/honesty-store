@@ -101,7 +101,7 @@ export const getTransaction = async (id) => {
 export const walkTransactions = async function*(transactionId: string): AsyncIterableIterator<Transaction> {
   const transaction = await getTransaction(transactionId);
   yield transaction;
-  walkTransactions(transaction.next);
+  yield* walkTransactions(transaction.next);
 };
 
 export const getTransactions = async ({ transactionId, limit = Infinity }): Promise<Transaction[]> => {
