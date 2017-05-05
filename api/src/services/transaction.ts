@@ -1,7 +1,10 @@
 import * as ms from 'ms';
+import { isOpenBox } from '../../../box/src/client';
 import { getItem } from '../../../item/src/client';
 import { CodedError } from '../../../service/src/error';
-import { createTransaction, getAccount, getTransaction, refundTransaction, TransactionBody } from '../../../transaction/src/client/index';
+import { 
+  createTransaction, getAccount, getTransaction, refundTransaction, Transaction, TransactionBody
+} from '../../../transaction/src/client/index';
 import { getBoxInfoForStore } from './store';
 
 const expandItemDetails = async (key, transaction) => {
@@ -34,7 +37,7 @@ const assertValidQuantity = (quantity) => {
   }
 };
 
-const assertUserCanAutoRefundTransaction = (userId, transaction) => {
+const assertUserCanAutoRefundTransaction = (userId: string, transaction: Transaction) => {
   const { id: transactionId, timestamp, data: { userId: transactionUserId } } = transaction;
   const refundCutOffDate =  ms('1h');
   if (timestamp < refundCutOffDate) {
@@ -73,6 +76,14 @@ export const purchase = async ({ key, itemID, userID, accountID, storeID, quanti
 export const refund = async ({ key, transactionId, userId }) => {
   const transaction = await getTransaction(key, transactionId);
   assertUserCanAutoRefundTransaction(userId, transaction);
+
+  const boxId = (transaction.data as any).boxId;
+  const valid = await isOpenBox(key, boxId);
+
+  if (!valid) {
+    throw new CodedError('AutoRefundPeriodExpired', 'Refunds can only be issued for items from open boxes');
+  }
+
   return await refundTransaction(key, transactionId);
 };
 
