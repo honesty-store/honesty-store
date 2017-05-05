@@ -5,7 +5,7 @@
   "main": "lib/transaction/src/index.js",
   "scripts": {
     "compile": "tsc",
-    "lint": "tslint --config ../tslint.json --project tsconfig.json --format stylish --type-check",
+    "lint": "tslint --config tslint.json --project tsconfig.json --format stylish --type-check",
     "test": "npm run lint && npm run compile",
     "ci": "npm test"
   },
@@ -29,7 +29,8 @@
     "@types/uuid": "^2.0.29",
     "@types/validator": "^5.7.35",
     "@types/winston": "0.0.32",
-    "tslint": "4.5.1-dev.0",
+    "tslint": "^5.2.0",
+    "tslint-eslint-rules": "^4.0.0",
     "tslint-microsoft-contrib": "^4.0.0",
     "typescript": "2.3.2"
   }
