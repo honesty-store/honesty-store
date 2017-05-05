@@ -5,10 +5,10 @@ import { stringify } from 'csv';
 
 import { getAllItems } from '../../item/src/client';
 import { createServiceKey } from '../../service/src/key';
-import { InternalAccount, InternalTransaction } from '../../transaction/src/client/index';
+import { InternalAccount, Transaction } from '../../transaction/src/client/index';
 import { User } from '../../user/src/client/index';
 
-type TransactionRecord = InternalAccount | InternalTransaction;
+type TransactionRecord = InternalAccount | Transaction;
 
 const cruftAccount = cruftDDB<TransactionRecord>({ tableName: 'honesty-store-transaction' });
 const cruftUser = cruftDDB<User>({ tableName: 'honesty-store-user' });
@@ -34,7 +34,7 @@ const main = async (args) => {
 
   const allTransactions = allAccountsAndTransactions
     // tslint:disable-next-line:triple-equals
-    .filter(account => (account as InternalAccount).balance == undefined) as InternalTransaction[];
+    .filter(account => (account as InternalAccount).balance == undefined) as Transaction[];
 
   const allAccounts = allAccountsAndTransactions
     // tslint:disable-next-line:triple-equals
