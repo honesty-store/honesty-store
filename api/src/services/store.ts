@@ -60,22 +60,23 @@ const extractBoxItems = (boxes: Box[], itemId: string, matchingCondition = (_box
     .reduce(
       (existing, current) => {
         const boxItem = extractBoxItem(current, itemId);
-        return [...existing, boxItem];
+        return [...existing, [current.id, boxItem]] as [[string, BoxItem]];
       },
-      [] as BoxItem[]
+      [] as [[string, BoxItem]]
     );
 };
 
-const getBoxItem = (boxes: Box[], itemID: string): BoxItem => {
+const getBoxInfoForItem = (boxes: Box[], itemID: string): [string, BoxItem] => {
   const boxesByDateReceived = boxes.slice().sort((a, b) => a.received - b.received);
   const inStockBoxItems = extractBoxItems(boxesByDateReceived, itemID, (({ depleted }) => depleted == null ));
 
   if (inStockBoxItems.length === 0) {
     const itemsByDateReceived = extractBoxItems(boxesByDateReceived, itemID);
-    const itemsByDateMarkedDepleted = itemsByDateReceived.slice().sort((a, b) => b.depleted - a.depleted);
+    const itemsByDateMarkedDepleted = itemsByDateReceived.slice().sort(([, aBoxItem], [, bBoxItem]) => bBoxItem.depleted - aBoxItem.depleted);
 
-    const mostRecentDepletion = itemsByDateMarkedDepleted[0].depleted;
-    const itemsMarkedDepletedOnDate = itemsByDateMarkedDepleted.filter(({ depleted }) => depleted === mostRecentDepletion );
+    const mostRecentlyDepletedPair = itemsByDateMarkedDepleted[0];
+    const mostRecentDepletion = mostRecentlyDepletedPair[1].depleted;
+    const itemsMarkedDepletedOnDate = itemsByDateMarkedDepleted.filter(([, { depleted }]) => depleted === mostRecentDepletion );
 
     return itemsMarkedDepletedOnDate.length > 1 ? itemsByDateReceived[0] : itemsByDateMarkedDepleted[0];
   }
@@ -84,11 +85,10 @@ const getBoxItem = (boxes: Box[], itemID: string): BoxItem => {
 
 export const boxIsReceivedAndOpen = (box) => box.closed == null && box.received != null;
 
-export const getItemPriceFromStore = async (key, storeCode: string, itemID: string) => {
+export const getBoxInfoForStore = async (key, storeCode: string, itemID: string) => {
   assertValidStoreCode(storeCode);
   const boxes = await getBoxesForStore(key, storeCode, boxIsReceivedAndOpen);
-  const { total } = getBoxItem(boxes, itemID);
-  return total;
+  return getBoxInfoForItem(boxes, itemID);
 };
 
 const getUniqueItemCounts = (boxes: Box[]) => {
@@ -141,7 +141,7 @@ export const storeItems = async (key, storeCode): Promise<StoreItem[]> => {
   return Promise.all(
     getUniqueItemCounts(openBoxes)
       .map(async ({ itemID, count, isMarketplace }) => {
-        const boxItem = getBoxItem(openBoxes, itemID);
+        const [, boxItem] = getBoxInfoForItem(openBoxes, itemID);
         const { total, expiry } = boxItem;
         const breakdown = getPriceBreakdown(boxItem);
 

@@ -2,7 +2,7 @@ import * as ms from 'ms';
 import { getItem } from '../../../item/src/client';
 import { CodedError } from '../../../service/src/error';
 import { createTransaction, getAccount, getTransaction, refundTransaction, TransactionBody } from '../../../transaction/src/client/index';
-import { getItemPriceFromStore } from './store';
+import { getBoxInfoForStore } from './store';
 
 const expandItemDetails = async (key, transaction) => {
   const { itemId } = transaction.data;
@@ -48,7 +48,8 @@ const assertUserCanAutoRefundTransaction = (userId, transaction) => {
 export const purchase = async ({ key, itemID, userID, accountID, storeID, quantity }) => {
   assertValidQuantity(quantity);
 
-  const price = quantity * await getItemPriceFromStore(key, storeID, itemID);
+  const [boxId, { total }] = await getBoxInfoForStore(key, storeID, itemID);
+  const price = quantity * total;
 
   const transaction: TransactionBody = {
     type: 'purchase',
@@ -57,7 +58,8 @@ export const purchase = async ({ key, itemID, userID, accountID, storeID, quanti
       quantity: String(quantity),
       itemId: itemID,
       userId: userID,
-      storeId: storeID
+      storeId: storeID,
+      boxId
     }
   };
 
