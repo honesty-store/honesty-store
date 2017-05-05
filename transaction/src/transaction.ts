@@ -109,19 +109,6 @@ const walkTransactions = async (transactionId: string, shouldContinue: (transact
   await walkTransactions(transaction.next, shouldContinue);
 };
 
-export const assertRefundableTransaction = async ({ id, type }, transactionHead) => {
-  if (type !== 'purchase') {
-    throw new Error(`Only purchase transactions may be refunded`);
-  }
-
-  await walkTransactions(transactionHead, (transaction) => {
-    if (transaction.type === 'refund' && transaction.other === id) {
-      throw new Error(`Refund already issued for transactionId ${id}`);
-    }
-    return transaction.id !== id;
-  });
-};
-
 export const getTransactions = async ({ transactionId, limit = Infinity }): Promise<Transaction[]> => {
   const transactions = [];
   await walkTransactions(transactionId, (transaction) => {

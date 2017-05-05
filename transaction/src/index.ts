@@ -1,17 +1,18 @@
 import { config } from 'aws-sdk';
 import bodyParser = require('body-parser');
 import express = require('express');
+import 'core-js/fn/symbol/async-iterator';
 
 import { serviceAuthentication, serviceRouter } from '../../service/src/router';
 import { assertValidAccountId, createAccount, getAccountInternal, updateAccount } from './account';
 import {
   AccountAndTransactions, balanceLimit, InternalAccount,
-  TEST_DATA_EMPTY_ACCOUNT_ID, TransactionAndBalance,
+  TEST_DATA_EMPTY_ACCOUNT_ID, Transaction, TransactionAndBalance,
   TransactionBody, TransactionDetails
 } from './client';
 import {
-  assertRefundableTransaction, assertValidTransaction, createTransactionId,
-  extractFieldsFromTransactionId, getTransaction, getTransactions, hashTransaction, putTransaction
+  assertValidTransaction, createTransactionId, extractFieldsFromTransactionId,
+  getTransaction, getTransactions, hashTransaction, putTransaction
 } from './transaction';
 
 const ACCOUNT_TRANSACTION_CACHE_SIZE = 10;
@@ -43,13 +44,9 @@ const getAccountAndTransactions = async ({ accountId, limit = GET_TRANSACTION_LI
 };
 
 const createTransaction = async (
-  accountId: string,
+  originalAccount: InternalAccount,
   body: TransactionBody,
 ): Promise<TransactionAndBalance> => {
-  assertValidAccountId(accountId);
-
-  const originalAccount = await getAccountInternal({ accountId });
-
   const transactionDetails: TransactionDetails = {
     timestamp: Date.now(),
     next: originalAccount.transactionHead,
@@ -57,7 +54,7 @@ const createTransaction = async (
   };
 
   const transaction = {
-    id: createTransactionId({ accountId, transactionId: hashTransaction(transactionDetails) }),
+    id: createTransactionId({ accountId: originalAccount.id, transactionId: hashTransaction(transactionDetails) }),
     ...transactionDetails
   };
 
@@ -72,6 +69,7 @@ const createTransaction = async (
     throw new Error(`Balance would be greater than ${balanceLimit} (${updatedBalance})`);
   }
 
+  // is this ok  - if updateAccount fails do we end up putting a dangling transaction in the db?
   await putTransaction(transaction);
 
   const updatedAccount: InternalAccount = {
@@ -90,15 +88,34 @@ const createTransaction = async (
   };
 };
 
+// tslint:disable-next-line:no-function-expression
+const generate = async function*(transactionId: string): AsyncIterableIterator<Transaction> {
+  const transaction = await getTransaction(transactionId);
+  yield transaction;
+  generate(transaction.next);
+};
+
 const refundTransaction = async (transactionId: string) => {
   const { accountId } = extractFieldsFromTransactionId(transactionId);
-  const { transactionHead } = await getAccountInternal({ accountId });
+  const account = await getAccountInternal({ accountId });
 
   const transactionToRefund = await getTransaction(transactionId);
-  await assertRefundableTransaction(transactionToRefund, transactionHead);
+
+  if (transactionToRefund.type !== 'purchase') {
+    throw new Error(`Only purchase transactions may be refunded`);
+  }
+
+  for await (const transaction of generate(account.transactionHead)) {
+    if (transaction.type === 'refund' && transaction.other === transactionId) {
+      throw new Error(`Refund already issued for transactionId ${transactionId}`);
+    }
+    if (transaction.id === transactionId) {
+      break;
+    }
+  }
 
   const response = await createTransaction(
-    accountId,
+    account,
     {
       type: 'refund',
       amount: -transactionToRefund.amount,
@@ -127,8 +144,10 @@ router.get(
 router.post(
   '/account/:accountId',
   serviceAuthentication,
-  async (_key, { accountId }, { type, amount, data }) =>
-    await createTransaction(accountId, { type, amount, data })
+  async (_key, { accountId }, { type, amount, data }) => {
+    const account = await getAccountInternal({ accountId });
+    return await createTransaction(account, { type, amount, data });
+  }
 );
 
 router.post(
