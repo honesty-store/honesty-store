@@ -13,54 +13,28 @@ dependencies:
   cache_directories:
     - ~/.cache/yarn
   override:
-    - cd api && yarn install
     - cd item && yarn install
     - cd aws && yarn install
-    - cd transaction && yarn install
-    - cd user && yarn install
-    - cd web && yarn install
-    - cd topup && yarn install
     - cd service && yarn install
-    - cd test && yarn install
-    - cd support && yarn install
-    - cd survey && yarn install
-    - cd box && yarn install
-    - cd scripts && yarn install
+    - cd api && yarn install
 compile:
   override:
-    - cd api && npm run ci
     - cd item && npm run ci
     - cd aws && npm run ci
-    - cd transaction && npm run ci
-    - cd user && npm run ci
-    - cd web && npm run ci
-    - cd topup && npm run ci
     - cd service && npm run ci
-    - cd test && npm run ci
-    - cd support && npm run ci
-    - cd survey && npm run ci
-    - cd box && npm run ci
-    - cd scripts && npm run ci
+    - cd api && npm run ci
 test:
   post:
-    - cd api && yarn install --production --ignore-scripts --prefer-offline
     - cd item && yarn install --production --ignore-scripts --prefer-offline
     - cd aws && yarn install --production --ignore-scripts --prefer-offline
-    - cd transaction && yarn install --production --ignore-scripts --prefer-offline
-    - cd user && yarn install --production --ignore-scripts --prefer-offline
-    - cd web && yarn install --production --ignore-scripts --prefer-offline
-    - cd topup && yarn install --production --ignore-scripts --prefer-offline
     - cd service && yarn install --production --ignore-scripts --prefer-offline
-    - cd test && yarn install --production --ignore-scripts --prefer-offline
-    - cd survey && yarn install --production --ignore-scripts --prefer-offline
-    - cd box && yarn install --production --ignore-scripts --prefer-offline
-    - cd scripts && yarn install --production --ignore-scripts --prefer-offline
+    - cd api && yarn install --production --ignore-scripts --prefer-offline
 deployment:
   aws:
     branch: /.*/
     commands:
       # currently we don't deploy support - it contains scripts intended to be locally-run
-      - ./aws/bin/aws deploy $CIRCLE_BRANCH api item transaction user web topup survey box
+      - ./aws/bin/aws deploy $CIRCLE_BRANCH item
       - ./aws/bin/aws prune
 general:
   # attempt to speed up artifact collection by specifying an empty list
