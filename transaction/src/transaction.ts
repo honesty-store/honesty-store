@@ -44,7 +44,7 @@ export const hashTransaction = (transaction: TransactionDetails) => {
   return hash.digest('hex');
 };
 
-export const assertValidTransaction = async ({ type, amount, data, id, other, next, legacyId, timestamp, ...rest }: Transaction) => {
+export const assertValidTransaction = ({ type, amount, data, id, other, next, legacyId, timestamp, ...rest }: Transaction) => {
   assertValidTransactionId(id);
   if (type == null || (type !== 'topup' && type !== 'purchase' && type !== 'refund')) {
     throw new Error(`Invalid transaction type ${type}`);
