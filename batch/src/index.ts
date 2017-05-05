@@ -15,7 +15,7 @@ const cruft = cruftDDB<Batch>({
 
 const assertValidBatchId = createAssertValidUuid('batchId');
 
-const getBatch = async(batchId): Promise<Batch> => {
+const getBatch = async (batchId): Promise<Batch> => {
   assertValidBatchId(batchId);
 
   return await cruft.read({ id: batchId });
