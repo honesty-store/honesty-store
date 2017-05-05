@@ -1,18 +1,17 @@
 import { config } from 'aws-sdk';
 import bodyParser = require('body-parser');
 import express = require('express');
-import 'core-js/fn/symbol/async-iterator';
 
 import { serviceAuthentication, serviceRouter } from '../../service/src/router';
 import { assertValidAccountId, createAccount, getAccountInternal, updateAccount } from './account';
 import {
   AccountAndTransactions, balanceLimit, InternalAccount,
-  TEST_DATA_EMPTY_ACCOUNT_ID, Transaction, TransactionAndBalance,
+  TEST_DATA_EMPTY_ACCOUNT_ID, TransactionAndBalance,
   TransactionBody, TransactionDetails
 } from './client';
 import {
   assertValidTransaction, createTransactionId, extractFieldsFromTransactionId,
-  getTransaction, getTransactions, hashTransaction, putTransaction
+  getTransaction, getTransactions, hashTransaction, putTransaction, walkTransactions
 } from './transaction';
 
 const ACCOUNT_TRANSACTION_CACHE_SIZE = 10;
@@ -88,13 +87,6 @@ const createTransaction = async (
   };
 };
 
-// tslint:disable-next-line:no-function-expression
-const generate = async function*(transactionId: string): AsyncIterableIterator<Transaction> {
-  const transaction = await getTransaction(transactionId);
-  yield transaction;
-  generate(transaction.next);
-};
-
 const refundTransaction = async (transactionId: string) => {
   const { accountId } = extractFieldsFromTransactionId(transactionId);
   const account = await getAccountInternal({ accountId });
@@ -105,7 +97,7 @@ const refundTransaction = async (transactionId: string) => {
     throw new Error(`Only purchase transactions may be refunded`);
   }
 
-  for await (const transaction of generate(account.transactionHead)) {
+  for await (const transaction of walkTransactions(account.transactionHead)) {
     if (transaction.type === 'refund' && transaction.other === transactionId) {
       throw new Error(`Refund already issued for transactionId ${transactionId}`);
     }

@@ -2,6 +2,7 @@ import { DynamoDB } from 'aws-sdk';
 import { createHash } from 'crypto';
 import stringify = require('json-stable-stringify');
 import isUUID = require('validator/lib/isUUID');
+import 'core-js/fn/symbol/async-iterator';
 
 import { Transaction, TransactionDetails } from './client';
 
@@ -96,25 +97,21 @@ export const getTransaction = async (id) => {
   return <Transaction>item;
 };
 
-const walkTransactions = async (transactionId: string, shouldContinue: (transaction: Transaction) => boolean) => {
+// tslint:disable-next-line:no-function-expression
+export const walkTransactions = async function*(transactionId: string): AsyncIterableIterator<Transaction> {
   const transaction = await getTransaction(transactionId);
-  if (!transaction.next) {
-    return;
-  }
-
-  if (!shouldContinue(transaction)) {
-    return;
-  }
-
-  await walkTransactions(transaction.next, shouldContinue);
+  yield transaction;
+  walkTransactions(transaction.next);
 };
 
 export const getTransactions = async ({ transactionId, limit = Infinity }): Promise<Transaction[]> => {
   const transactions = [];
-  await walkTransactions(transactionId, (transaction) => {
+  for await (const transaction of walkTransactions(transactionId)) {
+    if (transactions.length >= limit) {
+      break;
+    }
     transactions.push(transaction);
-    return transactions.length < limit;
-  });
+  }
   return transactions;
 };
 
