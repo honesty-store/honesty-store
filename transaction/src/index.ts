@@ -2,6 +2,7 @@ import { config } from 'aws-sdk';
 import bodyParser = require('body-parser');
 import express = require('express');
 
+import { CodedError } from '../../service/src/error';
 import { serviceAuthentication, serviceRouter } from '../../service/src/router';
 import { assertValidAccountId, createAccount, getAccountInternal, updateAccount } from './account';
 import {
@@ -94,12 +95,12 @@ const refundTransaction = async (transactionId: string) => {
   const transactionToRefund = await getTransaction(transactionId);
 
   if (transactionToRefund.type !== 'purchase') {
-    throw new Error(`Only purchase transactions may be refunded`);
+    throw new CodedError('NonRefundableTransactionType', `Only purchase transactions may be refunded`);
   }
 
   for await (const transaction of walkTransactions(account.transactionHead)) {
     if (transaction.type === 'refund' && transaction.other === transactionId) {
-      throw new Error(`Refund already issued for transactionId ${transactionId}`);
+      throw new CodedError('RefundAlreadyIssued', `Refund already issued for transactionId ${transactionId}`);
     }
     if (transaction.id === transactionId) {
       break;
