@@ -178,6 +178,8 @@ const ensureDeployment = async ({ restApi, serviceName }) => {
   const description = `${serviceName} deployment`;
 
   try {
+    // tslint:disable-next-line:no-console
+    console.log(`about to createDeployment....`);
     const response = await makeRetryable(apigateway.createDeployment({
       restApiId: restApi.id,
       stageName,
@@ -193,6 +195,8 @@ const ensureDeployment = async ({ restApi, serviceName }) => {
       throw e;
     }
 
+    // tslint:disable-next-line:no-console
+    console.log(`about to getDeployments.... (e was -->)`, e);
     const response = await apigateway.getDeployments({
       restApiId: restApi.id
     })
@@ -209,6 +213,8 @@ const ensureStagedIntegration = async ({ restApi, deployment }) => {
   const apigateway = new APIGateway({ apiVersion: '2015-07-09' });
 
   try {
+    // tslint:disable-next-line:no-console
+    console.log(`about to createStage...`);
     const response = await makeRetryable(apigateway.createStage({
       restApiId: restApi.id,
       stageName,
@@ -224,6 +230,8 @@ const ensureStagedIntegration = async ({ restApi, deployment }) => {
       throw e;
     }
 
+    // tslint:disable-next-line:no-console
+    console.log(`about to updateStage... (e -> )`, e);
     const response = await makeRetryable(apigateway.updateStage({
       restApiId: restApi.id,
       stageName,
