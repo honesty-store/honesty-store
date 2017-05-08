@@ -79,7 +79,7 @@ export const getBoxesForStore = async (key, storeId: string, filter: (box: Box) 
 export const getBox = (key, boxId: string) =>
   get<Box>(1, key, `/${boxId}`);
 
-export const isOpenBox = async (key, boxId) => {
+export const isOpenBox = async (key, boxId: string) => {
   const box = await getBox(key, boxId);
   return box.closed == null;
 };
