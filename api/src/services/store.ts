@@ -72,7 +72,8 @@ const getBoxInfoForItem = (boxes: Box[], itemID: string): [string, BoxItem] => {
 
   if (inStockBoxItems.length === 0) {
     const itemsByDateReceived = extractBoxItems(boxesByDateReceived, itemID);
-    const itemsByDateMarkedDepleted = itemsByDateReceived.slice().sort(([, aBoxItem], [, bBoxItem]) => bBoxItem.depleted - aBoxItem.depleted);
+    const itemsByDateMarkedDepleted = itemsByDateReceived.slice()
+      .sort(([, aBoxItem], [, bBoxItem]) => bBoxItem.depleted - aBoxItem.depleted);
 
     const mostRecentlyDepletedPair = itemsByDateMarkedDepleted[0];
     const mostRecentDepletion = mostRecentlyDepletedPair[1].depleted;

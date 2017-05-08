@@ -2,7 +2,7 @@ import * as ms from 'ms';
 import { isOpenBox } from '../../../box/src/client';
 import { getItem } from '../../../item/src/client';
 import { CodedError } from '../../../service/src/error';
-import { 
+import {
   createTransaction, getAccount, getTransaction, refundTransaction, Transaction, TransactionBody
 } from '../../../transaction/src/client/index';
 import { getBoxInfoForStore } from './store';
