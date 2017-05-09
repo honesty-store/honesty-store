@@ -36,12 +36,21 @@ const fullPageErrorState = (requestId, error, state) =>
     pending: state.pending.filter(e => e !== requestId)
   });
 
-const completionState = (requestId, updatedProps, state) =>
-  ({
+const completionState = (requestId, updatedProps, state) => {
+  const nextState = {
     ...state,
     ...updatedProps,
     pending: state.pending.filter(e => e !== requestId)
-  });
+  };
+  // In rare cases the backend can send us un-expanded item details. As a short term fix, we filter out these incomplete items.
+  return {
+    ...nextState,
+    store: {
+      ...nextState.store,
+      items: nextState.store.items.filter(({ name }) => name != null)
+    }
+  };
+};
 
 export default (state, action) => {
   switch (action.type) {
