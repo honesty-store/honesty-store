@@ -14,8 +14,7 @@
     "@types/node": "0.0.2",
     "@types/uuid": "^2.0.29",
     "@types/uuidjs": "^3.0.1",
-    "tslint": "^4.4.2",
-    "tslint-microsoft-contrib": "^4.0.0",
+    "tslint": "^5.2.0",
     "typescript": "2.1.5"
   },
   "dependencies": {
