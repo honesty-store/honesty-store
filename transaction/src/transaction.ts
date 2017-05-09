@@ -81,7 +81,7 @@ export const assertValidTransaction = ({ type, amount, data, id, other, next, le
 };
 
 export const getTransaction = async (id) => {
-  await assertValidTransactionId(id);
+  assertValidTransactionId(id);
   const response = await new DynamoDB.DocumentClient()
     .get({
       TableName: process.env.TABLE_NAME,

@@ -45,7 +45,7 @@ const getAccountAndTransactions = async ({ accountId, limit = GET_TRANSACTION_LI
 
 const createTransaction = async (
   originalAccount: InternalAccount,
-  body: TransactionBody,
+  body: TransactionBody
 ): Promise<TransactionAndBalance> => {
   const transactionDetails: TransactionDetails = {
     timestamp: Date.now(),

@@ -1,5 +1,5 @@
 import isEmail = require('validator/lib/isEmail');
-import { Box, flagOutOfStock, getBoxesForStore, markBoxAsReceived } from  '../../../box/src/client';
+import { Box, flagOutOfStock, getBoxesForStore, markBoxAsReceived } from '../../../box/src/client';
 import { CodedError } from '../../../service/src/error';
 import { authenticateAccessToken } from '../middleware/authenticate';
 import { getSessionData  } from '../services/session';
