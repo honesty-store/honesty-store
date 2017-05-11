@@ -43,10 +43,6 @@ const serviceConfig = {
     database: true,
     loadBalancer: { pathPattern: '/transaction/*', priority: 3 }
   },
-  user: {
-    database: true,
-    loadBalancer: { pathPattern: '/user/*', priority: 4 }
-  },
   topup: {
     database: true,
     loadBalancer: { pathPattern: '/topup/*', priority: 5 }
@@ -67,6 +63,9 @@ const lambdaConfig = {
   },
   batch: {
     database: 'ro'
+  },
+  user: {
+    database: 'rw'
   }
 };
 
