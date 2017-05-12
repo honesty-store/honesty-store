@@ -63,6 +63,7 @@ const lambdaConfig = {
   },
   web: {
     database: 'none',
+    handler: 'lambda.handler',
     catchAllResource: true
   }
 };
@@ -226,7 +227,7 @@ export default async ({ branch, dirs }) => {
       name: generateName({ branch, dir }),
       codeDirectory: dir,
       codeFilter: path => /(lib|node_modules)/.test(path),
-      handler: `lib/${dir}/src/lambda.handler`,
+      handler: lambdaConfig[dir].handler || `lib/${dir}/src/lambda.handler`,
       dynamoAccess: lambdaConfig[dir].database,
       withApiGateway: true,
       live: isLive(branch),
