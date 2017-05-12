@@ -33,12 +33,6 @@ export const ensureWebStack = async () =>
     }});
 
 const serviceConfig = {
-  web: {
-    loadBalancer: { pathPattern: '/*', priority: 10 }
-  },
-  api: {
-    loadBalancer: { pathPattern: '/api/*', priority: 1 }
-  }
 };
 const lambdaConfig = {
   item: {
@@ -63,6 +57,13 @@ const lambdaConfig = {
   user: {
     database: 'rw',
     withUserSecret: true
+  },
+  api: {
+    database: 'none'
+  },
+  web: {
+    database: 'none',
+    catchAllResource: true
   }
 };
 
@@ -129,24 +130,36 @@ const getCertificateArn = ({ branch }) => isLive(branch) ?
   'arn:aws:acm:eu-west-1:812374064424:certificate/49b5410d-0c99-4de0-a222-3fe364bfbc73' :
   'arn:aws:acm:eu-west-1:812374064424:certificate/0fd0796a-98c9-4e3c-8316-1efcf70aae77';
 
-const setupApiGateway = async ({ restApi, dir, lambdaArn }) => {
+const createApiGatewayResource = async ({ restApi, dir, catchAllResource }) => {
+  if (catchAllResource) {
+    return await ensureResource({
+      restApi,
+      path: '{proxy+}',
+      parentPath: '/'
+    });
+  }
+
   await ensureResource({
     restApi,
     path: dir,
     parentPath: '/'
   });
 
-  const proxyResource = await ensureResource({
+  return await ensureResource({
     restApi,
     path: '{proxy+}',
     parentPath: `/${dir}`
   });
+};
+
+const setupApiGateway = async ({ restApi, dir, lambdaArn, catchAllResource }) => {
+  const resource = await createApiGatewayResource({ restApi, dir, catchAllResource });
 
   await ensureLambdaMethod({
     restApi,
     serviceName: dir,
     lambdaArn,
-    resource: proxyResource
+    resource
   });
 };
 
@@ -228,7 +241,12 @@ export default async ({ branch, dirs }) => {
       }
     });
 
-    await setupApiGateway({ restApi, dir, lambdaArn: lambda.FunctionArn });
+    await setupApiGateway({
+      restApi,
+      dir,
+      lambdaArn: lambda.FunctionArn,
+      catchAllResource: lambdaConfig[dir].catchAllResource
+    });
   }
 
   const services: ECS.Service[] = [];
