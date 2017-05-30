@@ -14,6 +14,7 @@ const options = {
   entry: 'lib/src/lambda.js',
   exports: 'named',
   format: 'cjs',
+  sourceMap: true,
   dest: 'lib/bundle.js',
   plugins: [
     {
