@@ -23,6 +23,7 @@ export type ErrorCode =
   'ItemNotInBox' |
   'BoxAlreadyMarkedAsReceived' |
   'FullRegistrationRequired' |
+  'UserLoggedOut' |
   'UnknownError';
 
 export class CodedError extends Error {

@@ -48,8 +48,12 @@ export default async (params, dispatch, getState) => {
     return await apifetch(params);
   } catch (error) {
     if (error.code === 'AccessTokenExpired') {
-      await performSession()(dispatch, getState);
-      return await apifetch(params);
+      try {
+        await performSession()(dispatch, getState);
+        return await apifetch(params);
+      } catch (e) {
+        console.log('Throw error!');
+      }
     }
     if (error.code === 'TokenError') {
       // Our refresh token hasn't expired (that's RefreshTokenExpired),
