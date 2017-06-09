@@ -9,7 +9,7 @@ if (!secret) {
 
 const signToken = (payload, expiresIn) => jwt.sign(payload, secret, { algorithm: 'HS256', expiresIn });
 
-export const signAccessToken = ({ userId }) => signToken({ userId }, '5m');
+export const signAccessToken = ({ userId }) => signToken({ userId }, '30s');
 
 export const signRefreshToken = ({ userId, refreshToken }) => signToken({ userId, refreshToken }, '1y');
 
