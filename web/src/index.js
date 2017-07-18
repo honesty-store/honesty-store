@@ -19,9 +19,6 @@ import Profile from './profile/index';
 import CloseProfile from './profile/close';
 import EditProfile from './profile/edit';
 import LogoutProfile from './profile/logout';
-import Survey from './survey/index';
-import SurveyQuestions from './survey/questions';
-import SurveyComplete from './survey/complete';
 import TopupExistingCard from './topup/existing-card';
 import TopupNewCard from './topup/new-card';
 import TopupSuccess from './topup/success';
@@ -41,8 +38,6 @@ import ItemGuard from './item/guard';
 import ItemStockReport from './item/stockreport';
 import ItemPurchaseSuccess from './item/success';
 import ConfirmStoreChange from './confirm-store-change/index';
-import ReceivedBoxReport from './received-box/index';
-import ReceivedBoxSuccess from './received-box/success';
 import RefundGuard from './refund-request/guard';
 import RefundRequest from './refund-request/index';
 import RefundSuccess from './refund-request/success';
@@ -159,9 +154,6 @@ ReactDOM.render(
           <Route path="balance" component={Balance} />
           <Route path="balance/new-card" component={BalanceNewCard} />
           <Route path="balance/success" component={BalanceNewCardSuccess} />
-          <Route path="survey" component={Survey} />
-          <Route path="survey/questions" component={SurveyQuestions} />
-          <Route path="survey/complete" component={SurveyComplete} />
           <Route path="topup/success" component={TopupSuccess} />
           <Route path="topup/:amount" component={TopupExistingCard} />
           <Route path="topup/:amount/new" component={TopupNewCard} />
@@ -180,8 +172,6 @@ ReactDOM.render(
           <Route path="profile/close" component={CloseProfile} />
           <Route path="profile/edit" component={EditProfile} />
           <Route path="profile/logout" component={LogoutProfile} />
-          <Route path="agent/received/success" component={ReceivedBoxSuccess} />
-          <Route path="agent/received/:boxId" component={ReceivedBoxReport} />
           <Route path="refund/:transactionId" component={RefundGuard}>
             <Route path="request" component={RefundRequest} />
             <Route path="success" component={RefundSuccess} />
