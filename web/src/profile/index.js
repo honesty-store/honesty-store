@@ -50,7 +50,7 @@ const Profile = ({
         <h3 className="mt0 mb1">Latest activity</h3>
         <Link to="profile/history">View history</Link>
       </div>
-      <Transaction transaction={latestTransaction} />
+      {latestTransaction && <Transaction transaction={latestTransaction} />}
     </div>
     <ul className="list-reset bg-white px1 mt1">
       <li className="border-bottom border-silver py1">
