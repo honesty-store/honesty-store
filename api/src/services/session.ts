@@ -72,7 +72,10 @@ const getRecentUserRevenue = (storeRevenue: StoreRevenue[], userId: string): Use
   const expectedDates = [
     Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1),
     Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, 1),
-    Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 2, 1)
+    Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 2, 1),
+    Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 3, 1),
+    Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 4, 1),
+    Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 5, 1)
   ];
 
   return expectedDates.map((timestamp) => {
