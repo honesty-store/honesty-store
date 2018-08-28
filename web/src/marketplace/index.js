@@ -8,7 +8,7 @@ import Chrome from '../layout/chrome';
 import ItemListing from './item-listing';
 
 const MonthyRevenue = ({ month, total = 0 }) => (
-  <div>
+  <div className="col-4 center my1">
     <h2 className="navy my0">£{formatAny(total)}</h2>
     <h4 className="gray regular my0 center">{month}</h4>
   </div>
@@ -18,7 +18,7 @@ const More = ({ items, userRevenue }) => (
   <Chrome>
     <div className="p2 bg-white">
       <h3 className="regular navy center my2">Your total monthly revenue</h3>
-      <div className="flex justify-around mt2 mb1">
+      <div className="flex justify-around flex-wrap mt1">
         {userRevenue.map(({ startInclusive, total }) => (
           <MonthyRevenue
             key={startInclusive}
