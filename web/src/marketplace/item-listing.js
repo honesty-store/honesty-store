@@ -47,66 +47,64 @@ export default ({
       to={`/item/${id}`}
       className={`btn regular flex navy ${leftCount <= 0 ? 'grayscale' : ''}`}
     >
-      <div className="flex p2">
-        <div className="col-3">
+      <div className="col-3">
+        <div
+          className="bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url(${safeLookupItemImage(image)})`,
+            paddingBottom: '100%'
+          }}
+        />
+      </div>
+      <div className="ml2 flex flex-column flex-auto justify-center">
+        <div className="flex justify-between">
+          <div className="flex flex-column justify-center">
+            <h3 className="navy mt0 mb0 regular">
+              {name}
+            </h3>
+            {qualifier &&
+              <p className="mt0 mb0 gray">
+                {qualifier}
+              </p>}
+          </div>
+          <div className="flex flex-column justify-center items-end">
+            <h3 className="navy regular my0">
+              <Currency amount={revenue} />
+            </h3>
+            <p className="my0 gray">revenue</p>
+          </div>
+        </div>
+        <div
+          className="bg-lightgray flex rounded my2"
+          style={{
+            height: '0.5rem',
+            overflow: 'hidden'
+          }}
+        >
           <div
-            className="bg-center bg-no-repeat"
+            className="inline-block col-2 bg-navy"
             style={{
-              backgroundImage: `url(${safeLookupItemImage(image)})`,
-              paddingBottom: '100%'
+              width: `${(listCount - unknownCount - soldCount) / listCount * 100}%`
             }}
           />
-        </div>
-        <div className="ml2 flex flex-column flex-auto justify-center">
-          <div className="flex justify-between">
-            <div className="flex flex-column justify-center">
-              <h3 className="navy mt0 mb0 regular">
-                {name}
-              </h3>
-              {qualifier &&
-                <p className="mt0 mb0 gray">
-                  {qualifier}
-                </p>}
-            </div>
-            <div className="flex flex-column justify-center items-end">
-              <h3 className="navy regular my0">
-                <Currency amount={revenue} />
-              </h3>
-              <p className="my0 gray">revenue</p>
-            </div>
-          </div>
           <div
-            className="bg-lightgray flex rounded my2"
-            style={{
-              height: '0.5rem',
-              overflow: 'hidden'
-            }}
-          >
-            <div
-              className="inline-block col-2 bg-navy"
-              style={{
-                width: `${(listCount - unknownCount - soldCount) / listCount * 100}%`
-              }}
-            />
-            <div
-              className="inline-block col-2 bg-aqua"
-              style={{ width: `${unknownCount / listCount * 100}%` }}
-            />
-          </div>
-          <ListingBreakdown
-            items={items}
-            itemRenderer={({ title, count, color }, index, length) => (
-              <li key={title} className="inline-block">
-                <span className={color}>
-                  {count}
-                  {'\u00a0'}
-                  {title}
-                </span>
-                {index < length - 1 && <span>{'\u00a0'}/{'\u00a0'}</span>}
-              </li>
-            )}
+            className="inline-block col-2 bg-aqua"
+            style={{ width: `${unknownCount / listCount * 100}%` }}
           />
         </div>
+        <ListingBreakdown
+          items={items}
+          itemRenderer={({ title, count, color }, index, length) => (
+            <li key={title} className="inline-block">
+              <span className={color}>
+                {count}
+                {'\u00a0'}
+                {title}
+              </span>
+              {index < length - 1 && <span>{'\u00a0'}/{'\u00a0'}</span>}
+            </li>
+          )}
+        />
       </div>
     </Link>
   );
