@@ -2,7 +2,9 @@
 *.d.ts
 node_modules
 secrets.sh
+yarn-error.log
 
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
