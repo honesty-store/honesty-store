@@ -83,8 +83,7 @@ export class Microservice extends cdk.Construct {
   public requestAccessToInvokeMicroservices(microservices: Microservice[]) {
     microservices.forEach(microservice => {
       const policy = new LambdaInvokePolicy(this.functionRole, `lambda-invoke-${this.functionName}-${microservice.functionName}`, {
-        invokeStatementResources: [microservice.calculatedFunctionArn],
-        uniqueIdentifier: microservice.functionName
+        invokeStatementResources: [microservice.calculatedFunctionArn]
       });
       this.functionRole.addManagedPolicy(policy);
     });

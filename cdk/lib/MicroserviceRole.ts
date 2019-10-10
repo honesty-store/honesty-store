@@ -1,7 +1,6 @@
 import cdk = require('@aws-cdk/core');
 import iam = require('@aws-cdk/aws-iam');
 import { DynamoTablePolicy, DynamoTablePolicyTableProps} from './iam/DynamoTablePolicy';
-import { LambdaInvokePolicy } from './iam/LambdaInvokePolicy';
 
 export interface MicroserviceRoleProps {
   tableProps?: DynamoTablePolicyTableProps;
@@ -29,9 +28,8 @@ export class MicroserviceRole extends iam.Role {
     this.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'));
 
     if (props.tableProps != null) {
-      const dynamoAccessPolicy = new DynamoTablePolicy(this, `table-${props.tableProps.tableAccessLevel}`, {
+      const dynamoAccessPolicy = new DynamoTablePolicy(this, `table-${props.tableProps.tableAccessLevel}-${props.functionName}`, {
         tableProps: props.tableProps,
-        uniqueIdentifier: props.functionName
       });
       this.addManagedPolicy(dynamoAccessPolicy);
     }
