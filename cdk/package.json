@@ -6,7 +6,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "clean": "find lib bin -type f -name '*.d.ts' -delete -o -name '*.js' -delete",
+    "clean": "rm -rf build/*",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk"
