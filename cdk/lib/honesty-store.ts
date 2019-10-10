@@ -6,7 +6,10 @@ export class HonestyStore extends cdk.Stack {
     super(scope, id, props);
 
     const item = new Item(this, `item`, {
-      tableRemovalPolicy: cdk.RemovalPolicy.DESTROY
+      tableRemovalPolicy: cdk.RemovalPolicy.DESTROY,
+      secretServiceToken: 'service:foo',
+      slackChannelPrefix: 'zrhs-',
+      baseUrl: 'https://zrhs.honestystore.com'
     });
   }
 }

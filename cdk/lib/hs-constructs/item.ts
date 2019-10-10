@@ -6,6 +6,9 @@ import { LambdaDynamoRole, LambdaDynamoRoleDynamoAccess } from '../hs-constructs
 
 export interface ItemProps {
   readonly tableRemovalPolicy: cdk.RemovalPolicy;
+  readonly secretServiceToken: string;
+  readonly slackChannelPrefix: string;
+  readonly baseUrl: string;
 }
 
 export class Item extends cdk.Construct {
@@ -29,7 +32,11 @@ export class Item extends cdk.Construct {
       timeout: cdk.Duration.seconds(10),
       role: new LambdaDynamoRole(this, 'lambda-dynamo', {dynamoAccess: LambdaDynamoRoleDynamoAccess.RW}),
       environment: {
-        TABLE_NAME: table.tableName
+        TABLE_NAME: table.tableName,
+        BASE_URL: props.baseUrl,
+        LAMBDA_BASE_URL: props.baseUrl,
+        SERVICE_TOKEN_SECRET: props.secretServiceToken,
+        SLACK_CHANNEL_PREFIX: props.slackChannelPrefix
       }
     });
   }
