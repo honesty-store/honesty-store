@@ -9,7 +9,8 @@
     "tsc": "../node_modules/.bin/tsc",
     "rollup": "../node_modules/.bin/rollup -c ../rollup.config.js",
     "uglifyjs": "../node_modules/uglify-es/bin/uglifyjs lib/bundle.js > lib/bundle-min.js",
-    "build": "npm run test && npm run tsc && npm run rollup && npm run uglifyjs"
+    "archive": "bestzip lambda.zip lib/bundle-min.js && cd ../aws/xray && bestzip ../../store/lambda.zip node_modules/",
+    "build": "npm run test && npm run tsc && npm run rollup && npm run uglifyjs && npm run archive"
   },
   "dependencies": {
     "@honesty-store/cruft": "0.0.0",
@@ -26,6 +27,7 @@
     "@types/node": "0.0.2",
     "@types/uuid": "^2.0.29",
     "@types/validator": "^5.7.35",
+    "bestzip": "2.1.4",
     "chai": "^3.5.0",
     "jest": "^19.0.0",
     "ts-jest": "^19.0.0"
