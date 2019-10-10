@@ -11,11 +11,4 @@ jobs:
       - run: yarn
       - run: yarn run bootstrap
       - run: yarn run tslint
-      - run:
-          name: yarn run build
-          command: |
-            export REACT_APP_STRIPE_PUBLISHABLE_KEY=$([ $CIRCLE_BRANCH = 'live' ] && echo pk_live_koh6JFFsmJxYyGBok5DHRtJZ || echo pk_test_Lp6VONbqz8TbbnD4oFThDBmT)
-            export PUBLIC_URL=$([ $CIRCLE_BRANCH = 'live' ] && echo https://honesty.store || echo https://$CIRCLE_BRANCH.honesty.store)
-            yarn run build
-      - run: ./aws/bin/aws deploy $CIRCLE_BRANCH api item transaction user web topup store transaction-store
-      - run: ./aws/bin/aws prune
+      - run: yarn run build
