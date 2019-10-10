@@ -30,7 +30,7 @@ export class Item extends cdk.Construct {
       handler: lambdaHandler,
       code: lambda.Code.fromAsset(lambdaZipPath),
       timeout: cdk.Duration.seconds(10),
-      role: new MicroserviceRole(this, 'microservice-role', {dynamoAccess: MicroserviceRoleTableAccess.RW}),
+      role: new MicroserviceRole(this, 'microservice-role', {tableAccessLevel: MicroserviceRoleTableAccess.RW}),
       environment: {
         TABLE_NAME: table.tableName,
         BASE_URL: props.baseUrl,

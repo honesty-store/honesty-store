@@ -2,7 +2,7 @@ import cdk = require('@aws-cdk/core');
 import iam = require('@aws-cdk/aws-iam');
 
 interface MicroserviceRoleProps {
-  readonly dynamoAccess: MicroserviceRoleTableAccess;
+  readonly tableAccessLevel?: MicroserviceRoleTableAccess;
 }
 
 export enum MicroserviceRoleTableAccess {
@@ -33,8 +33,9 @@ export class MicroserviceRole extends iam.Role {
       iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole')
     ];
 
+    const baseRoleName = 'lambda';
     const roleProps = {
-      roleName: `aws-lambda-and-dynamo-${props.dynamoAccess}`,
+      roleName: props.tableAccessLevel ? `${baseRoleName}-table-${props.tableAccessLevel}` : baseRoleName,
       managedPolicies: roleAwsLambdaAndDynamoBase,
       path: '/',
       maxSessionDuration: cdk.Duration.hours(1),
@@ -42,7 +43,9 @@ export class MicroserviceRole extends iam.Role {
     };
 
     super(scope, id, roleProps);
-    const dynamoAccessPolicy = microserviceRoleAccessPolicyMap.get(props.dynamoAccess);
-    this.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName(dynamoAccessPolicy));
+    if (props.tableAccessLevel != null) {
+      const dynamoAccessPolicy = microserviceRoleAccessPolicyMap.get(props.tableAccessLevel);
+      this.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName(dynamoAccessPolicy));
+    }
   }
 }
