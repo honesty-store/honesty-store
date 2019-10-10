@@ -5,6 +5,7 @@
   "packages": [
     "api",
     "aws",
+    "cdk",
     "cruft",
     "item",
     "scripts",
