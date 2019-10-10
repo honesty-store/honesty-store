@@ -12,7 +12,7 @@ export interface MicroserviceProps {
 
 export interface Configuration {
   readonly tableRemovalPolicy: cdk.RemovalPolicy;
-  readonly secretServiceToken: string;
+  readonly serviceTokenSecret: string;
   readonly slackChannelPrefix: string;
   readonly baseUrl: string;
 }
@@ -30,7 +30,7 @@ export class Microservice extends cdk.Construct {
     const lambdaRuntime = lambda.Runtime.NODEJS_8_10;
 
     const lambdaEnvironment: MicroserviceLambdaEnvironment = {
-      ['SERVICE_TOKEN_SECRET']: configuration.secretServiceToken,
+      ['SERVICE_TOKEN_SECRET']: configuration.serviceTokenSecret,
       ['SLACK_CHANNEL_PREFIX']: configuration.slackChannelPrefix,
       ['BASE_URL']: configuration.baseUrl,
       ['LAMBDA_BASE_URL']: configuration.baseUrl

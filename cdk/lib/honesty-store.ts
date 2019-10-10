@@ -7,7 +7,7 @@ export class HonestyStore extends cdk.Stack {
 
     const item = new Item(this, `item`, {
       tableRemovalPolicy: cdk.RemovalPolicy.DESTROY,
-      secretServiceToken: 'service:foo',
+      serviceTokenSecret: 'service:foo',
       slackChannelPrefix: 'zrhs-',
       baseUrl: 'https://zrhs.honestystore.com'
     });
