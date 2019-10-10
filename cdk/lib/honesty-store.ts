@@ -1,5 +1,5 @@
 import cdk = require('@aws-cdk/core');
-import { Item } from './hs-constructs/item';
+import { Item } from './microservices/Item';
 
 export class HonestyStore extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {

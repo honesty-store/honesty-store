@@ -1,7 +1,7 @@
 import { expect as expectCDK, haveResource, HaveResourceAssertion, haveResourceLike } from '@aws-cdk/assert';
 import cdk = require('@aws-cdk/core');
 import iam = require('@aws-cdk/aws-iam');
-import { MicroserviceRole, MicroserviceRoleTableAccess } from '../lib/hs-constructs/MicroserviceRole';
+import { MicroserviceRole, MicroserviceRoleTableAccess } from '../lib/MicroserviceRole';
 
 test('MicroserviceRole has AWS::IAM::Role', () => {
   const app = new cdk.App();
