@@ -1,21 +1,21 @@
 import cdk = require('@aws-cdk/core');
 import iam = require('@aws-cdk/aws-iam');
 
-interface LambdaDynamoRoleProps {
-  readonly dynamoAccess: LambdaDynamoRoleDynamoAccess;
+interface MicroserviceRoleProps {
+  readonly dynamoAccess: MicroserviceRoleTableAccess;
 }
 
-export enum LambdaDynamoRoleDynamoAccess {
+export enum MicroserviceRoleTableAccess {
   RW = 'rw',
   RO = 'ro'
 }
 
-const lambdaDynamoRoleDynamoAccessPolicyMap = new Map();
-lambdaDynamoRoleDynamoAccessPolicyMap.set(LambdaDynamoRoleDynamoAccess.RO, 'AmazonDynamoDBReadOnlyAccess');
-lambdaDynamoRoleDynamoAccessPolicyMap.set(LambdaDynamoRoleDynamoAccess.RW, 'AmazonDynamoDBFullAccess');
+const microserviceRoleAccessPolicyMap = new Map();
+microserviceRoleAccessPolicyMap.set(MicroserviceRoleTableAccess.RO, 'AmazonDynamoDBReadOnlyAccess');
+microserviceRoleAccessPolicyMap.set(MicroserviceRoleTableAccess.RW, 'AmazonDynamoDBFullAccess');
 
-export class LambdaDynamoRole extends iam.Role {
-  constructor(scope: cdk.Construct, id: string, props: LambdaDynamoRoleProps) {
+export class MicroserviceRole extends iam.Role {
+  constructor(scope: cdk.Construct, id: string, props: MicroserviceRoleProps) {
     const managedPolicyLambdaInvokeStatement = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       resources: ['*'],
@@ -42,7 +42,7 @@ export class LambdaDynamoRole extends iam.Role {
     };
 
     super(scope, id, roleProps);
-    const dynamoAccessPolicy = lambdaDynamoRoleDynamoAccessPolicyMap.get(props.dynamoAccess);
+    const dynamoAccessPolicy = microserviceRoleAccessPolicyMap.get(props.dynamoAccess);
     this.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName(dynamoAccessPolicy));
   }
 }

@@ -2,7 +2,7 @@ import cdk = require('@aws-cdk/core');
 import lambda = require('@aws-cdk/aws-lambda');
 import dynamodb = require('@aws-cdk/aws-dynamodb');
 import { AttributeType } from '@aws-cdk/aws-dynamodb';
-import { LambdaDynamoRole, LambdaDynamoRoleDynamoAccess } from '../hs-constructs/LambdaDynamoRole';
+import { MicroserviceRole, MicroserviceRoleTableAccess} from '../hs-constructs/MicroserviceRole';
 
 export interface ItemProps {
   readonly tableRemovalPolicy: cdk.RemovalPolicy;
@@ -30,7 +30,7 @@ export class Item extends cdk.Construct {
       handler: lambdaHandler,
       code: lambda.Code.fromAsset(lambdaZipPath),
       timeout: cdk.Duration.seconds(10),
-      role: new LambdaDynamoRole(this, 'lambda-dynamo', {dynamoAccess: LambdaDynamoRoleDynamoAccess.RW}),
+      role: new MicroserviceRole(this, 'microservice-role', {dynamoAccess: MicroserviceRoleTableAccess.RW}),
       environment: {
         TABLE_NAME: table.tableName,
         BASE_URL: props.baseUrl,
