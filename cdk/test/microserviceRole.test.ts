@@ -6,7 +6,7 @@ import { MicroserviceRole, MicroserviceRoleTableAccess } from '../lib/Microservi
 test('MicroserviceRole has AWS::IAM::Role', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'test');
-  const role = new MicroserviceRole(stack, 'testrole', {});
+  const role = new MicroserviceRole(stack, 'testrole', {uniqueIdentifier: 'foo'});
 
   expectCDK(stack).to(haveResource('AWS::IAM::Role'));
 });
@@ -14,7 +14,7 @@ test('MicroserviceRole has AWS::IAM::Role', () => {
 test('MicroserviceRole has AWS::IAM::ManagedPolicy with correct PolicyStatement', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'test');
-  const role = new MicroserviceRole(stack, 'testrole', {});
+  const role = new MicroserviceRole(stack, 'testrole', {uniqueIdentifier: 'foo'});
 
   expectCDK(stack).to(haveResource('AWS::IAM::ManagedPolicy', {
     PolicyDocument: {
@@ -33,7 +33,7 @@ test('MicroserviceRole has AWS::IAM::ManagedPolicy with correct PolicyStatement'
 test('MicroserviceRole with RW table property hasAmazonDynamoDBFullAccess ', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'test');
-  const role = new MicroserviceRole(stack, 'testrole', {tableAccessLevel: MicroserviceRoleTableAccess.RW});
+  const role = new MicroserviceRole(stack, 'testrole', {tableAccessLevel: MicroserviceRoleTableAccess.RW, uniqueIdentifier: 'foo'});
   const stackString = JSON.stringify(expectCDK(stack).value);
 
   expect(stackString).toMatch(':iam::aws:policy/AmazonDynamoDBFullAccess');
@@ -42,7 +42,7 @@ test('MicroserviceRole with RW table property hasAmazonDynamoDBFullAccess ', () 
 test('MicroserviceRole with RO table property does not have AmazonDynamoDBFullAccess ', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'test');
-  const role = new MicroserviceRole(stack, 'testrole', {tableAccessLevel: MicroserviceRoleTableAccess.RO});
+  const role = new MicroserviceRole(stack, 'testrole', {tableAccessLevel: MicroserviceRoleTableAccess.RO, uniqueIdentifier: 'foo'});
   const stackString = JSON.stringify(expectCDK(stack).value);
 
   expect(stackString).not.toMatch(':iam::aws:policy/AmazonDynamoDBFullAccess');
@@ -51,7 +51,7 @@ test('MicroserviceRole with RO table property does not have AmazonDynamoDBFullAc
 test('MicroserviceRole with RO table property has AmazonDynamoDBReadOnlyAccess', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'test');
-  const role = new MicroserviceRole(stack, 'testrole', {tableAccessLevel: MicroserviceRoleTableAccess.RO});
+  const role = new MicroserviceRole(stack, 'testrole', {tableAccessLevel: MicroserviceRoleTableAccess.RO, uniqueIdentifier: 'foo'});
   const stackString = JSON.stringify(expectCDK(stack).value);
 
   expect(stackString).toMatch(':iam::aws:policy/AmazonDynamoDBReadOnlyAccess');
@@ -60,7 +60,7 @@ test('MicroserviceRole with RO table property has AmazonDynamoDBReadOnlyAccess',
 test('MicroserviceRole without table property does not have AmazonDynamoDBFullAccess ', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'test');
-  const role = new MicroserviceRole(stack, 'testrole', {});
+  const role = new MicroserviceRole(stack, 'testrole', {uniqueIdentifier: 'foo'});
   const stackString = JSON.stringify(expectCDK(stack).value);
 
   expect(stackString).not.toMatch(':iam::aws:policy/AmazonDynamoDBFullAccess');
@@ -69,7 +69,7 @@ test('MicroserviceRole without table property does not have AmazonDynamoDBFullAc
 test('MicroserviceRole without table property does not have AmazonDynamoDBReadOnlyAccess', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'test');
-  const role = new MicroserviceRole(stack, 'testrole', {});
+  const role = new MicroserviceRole(stack, 'testrole', {uniqueIdentifier: 'foo'});
   const stackString = JSON.stringify(expectCDK(stack).value);
 
   expect(stackString).not.toMatch(':iam::aws:policy/AmazonDynamoDBReadOnlyAccess');
@@ -78,7 +78,7 @@ test('MicroserviceRole without table property does not have AmazonDynamoDBReadOn
 test('MicroserviceRole has AWSLambdaBasicExecutionRole', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'test');
-  const role = new MicroserviceRole(stack, 'testrole', {});
+  const role = new MicroserviceRole(stack, 'testrole', {uniqueIdentifier: 'foo'});
   const stackString = JSON.stringify(expectCDK(stack).value);
 
   expect(stackString).toMatch(':iam::aws:policy/service-role/AWSLambdaBasicExecutionRole');
@@ -87,7 +87,7 @@ test('MicroserviceRole has AWSLambdaBasicExecutionRole', () => {
 test('MicroserviceRole has AWSXrayWriteOnlyAccess', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'test');
-  const role = new MicroserviceRole(stack, 'testrole', {});
+  const role = new MicroserviceRole(stack, 'testrole', {uniqueIdentifier: 'foo'});
   const stackString = JSON.stringify(expectCDK(stack).value);
 
   expect(stackString).toMatch(':iam::aws:policy/AWSXrayWriteOnlyAccess');

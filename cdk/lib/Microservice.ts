@@ -15,6 +15,7 @@ export interface Configuration {
   readonly serviceTokenSecret: string;
   readonly slackChannelPrefix: string;
   readonly baseUrl: string;
+  readonly stackName: string;
 }
 
 interface MicroserviceLambdaEnvironment {
@@ -46,7 +47,10 @@ export class Microservice extends cdk.Construct {
       lambdaEnvironment.TABLE_NAME = table.tableName;
     }
 
-    const lambdaRole = new MicroserviceRole(this, 'microservice_role', {tableAccessLevel: props.tableAcessLevel});
+    const lambdaRole = new MicroserviceRole(this, 'microservice_role', {
+      tableAccessLevel: props.tableAcessLevel,
+      uniqueIdentifier: `${configuration.stackName}_${props.hsPackageName}`
+    });
 
     const fn = new lambda.Function(this, 'lambda', {
       runtime: lambdaRuntime,

@@ -12,14 +12,16 @@ export class HonestyStore extends cdk.Stack {
       tableRemovalPolicy: cdk.RemovalPolicy.DESTROY,
       serviceTokenSecret: serviceTokenSecret,
       slackChannelPrefix: 'zrhs-',
-      baseUrl: 'https://zrhs.honestystore.com'
+      baseUrl: 'https://zrhs.honestystore.com',
+      stackName: this.stackName
     });
 
     const store = new Store(this, `store`, {
       tableRemovalPolicy: cdk.RemovalPolicy.DESTROY,
       serviceTokenSecret: serviceTokenSecret,
       slackChannelPrefix: 'zrhs-',
-      baseUrl: 'https://zrhs.honestystore.com'
+      baseUrl: 'https://zrhs.honestystore.com',
+      stackName: this.stackName
     });
   }
 }

@@ -1,9 +1,9 @@
 import cdk = require('@aws-cdk/core');
 import iam = require('@aws-cdk/aws-iam');
-import uuid = require('uuid/v4');
 
 interface MicroserviceRoleProps {
   readonly tableAccessLevel?: MicroserviceRoleTableAccess;
+  readonly uniqueIdentifier: string;
 }
 
 export enum MicroserviceRoleTableAccess {
@@ -18,10 +18,9 @@ microserviceRoleAccessPolicyMap.set(MicroserviceRoleTableAccess.RW, 'AmazonDynam
 export class MicroserviceRole extends iam.Role {
   constructor(scope: cdk.Construct, id: string, props: MicroserviceRoleProps) {
     const baseRoleName = 'lambda';
-    const nameRandomPart = uuid().split('-')[0];
     const roleProps = {
       // tslint:disable-next-line: max-line-length
-      roleName: props.tableAccessLevel ? `${baseRoleName}-table-${props.tableAccessLevel}-${nameRandomPart}` : `${baseRoleName}-${nameRandomPart}`,
+      roleName: props.tableAccessLevel ? `${baseRoleName}-table-${props.tableAccessLevel}-${props.uniqueIdentifier}` : `${baseRoleName}-${props.uniqueIdentifier}`,
       path: '/',
       maxSessionDuration: cdk.Duration.hours(1),
       assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com')
@@ -35,7 +34,7 @@ export class MicroserviceRole extends iam.Role {
     });
 
     const managedPolicyLambdaInvoke = new iam.ManagedPolicy(this, 'lamba-invoke', {
-      managedPolicyName: `lambda-invoke-${nameRandomPart}`,
+      managedPolicyName: `lambda-invoke-${props.uniqueIdentifier}`,
       statements:  [managedPolicyLambdaInvokeStatement]
     });
 
