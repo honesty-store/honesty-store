@@ -1,8 +1,8 @@
 import cdk = require('@aws-cdk/core');
 import lambda = require('@aws-cdk/aws-lambda');
 import dynamodb = require('@aws-cdk/aws-dynamodb');
-import { AttributeType } from '@aws-cdk/aws-dynamodb';
-import { MicroserviceRole, MicroserviceRoleTableAccess } from './MicroserviceRole';
+import { AttributeType, Table } from '@aws-cdk/aws-dynamodb';
+import { MicroserviceRole, MicroserviceRoleProps, MicroserviceRoleTableAccess } from './MicroserviceRole';
 
 export interface MicroserviceProps {
   readonly tableAcessLevel?: MicroserviceRoleTableAccess;
@@ -37,6 +37,10 @@ export class Microservice extends cdk.Construct {
       ['LAMBDA_BASE_URL']: configuration.baseUrl
     };
 
+    const roleProps: MicroserviceRoleProps = {
+      uniqueIdentifier: `${configuration.stackName}_${props.hsPackageName}`
+    };
+
     if (props.tableAcessLevel != null) {
       const table = new dynamodb.Table(this, 'table', {
         readCapacity: 1,
@@ -45,12 +49,14 @@ export class Microservice extends cdk.Construct {
         removalPolicy: configuration.tableRemovalPolicy
       });
       lambdaEnvironment.TABLE_NAME = table.tableName;
+
+      roleProps.tableProps = {
+        tableAccessLevel: props.tableAcessLevel,
+        table: table
+      };
     }
 
-    const lambdaRole = new MicroserviceRole(this, 'microservice_role', {
-      tableAccessLevel: props.tableAcessLevel,
-      uniqueIdentifier: `${configuration.stackName}_${props.hsPackageName}`
-    });
+    const lambdaRole = new MicroserviceRole(this, 'microservice_role', roleProps);
 
     const fn = new lambda.Function(this, 'lambda', {
       runtime: lambdaRuntime,
