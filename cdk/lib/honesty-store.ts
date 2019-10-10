@@ -2,6 +2,7 @@ import cdk = require('@aws-cdk/core');
 import { Item } from './microservices/Item';
 import { Store } from './microservices/Store';
 import { Transaction } from './microservices/Transaction';
+import { User } from './microservices/User';
 
 export class HonestyStore extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -23,7 +24,9 @@ export class HonestyStore extends cdk.Stack {
 
     const transaction = new Transaction(this, 'transaction', configuration);
 
-    const microservices = [item, store, transaction];
+    const user = new User(this, 'user', {...configuration, userTokenSecret:"user:foo"});
+
+    const microservices = [item, store, transaction, user];
     microservices.forEach(microservice => {
       microservice.requestAccessToInvokeMicroservices(microservices);
     });

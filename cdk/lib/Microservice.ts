@@ -30,6 +30,7 @@ export class Microservice extends cdk.Construct {
   public functionName: string;
   private region: string;
   private accountId: string;
+  protected function: lambda.Function;
   constructor(scope: cdk.Construct, id: string, props: MicroserviceProps, configuration: Configuration) {
     super(scope, id);
 
@@ -69,7 +70,7 @@ export class Microservice extends cdk.Construct {
 
     this.functionRole = new MicroserviceRole(this, 'microservice_role', roleProps);
 
-    const fn = new lambda.Function(this, 'lambda', {
+    this.function = new lambda.Function(this, 'lambda', {
       runtime: lambdaRuntime,
       handler: lambdaHandler,
       code: lambda.Code.fromAsset(lambdaZipPath),
