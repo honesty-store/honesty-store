@@ -8,12 +8,17 @@ export class HonestyStore extends cdk.Stack {
 
     const serviceTokenSecret = 'service:foo';
 
+    const region = this.region;
+    const accountId = this.account;
+
     const item = new Item(this, `item`, {
       tableRemovalPolicy: cdk.RemovalPolicy.DESTROY,
       serviceTokenSecret: serviceTokenSecret,
       slackChannelPrefix: 'zrhs-',
       baseUrl: 'https://zrhs.honestystore.com',
-      stackName: this.stackName
+      stackName: this.stackName,
+      region: region,
+      accountId: accountId
     });
 
     const store = new Store(this, `store`, {
@@ -21,7 +26,14 @@ export class HonestyStore extends cdk.Stack {
       serviceTokenSecret: serviceTokenSecret,
       slackChannelPrefix: 'zrhs-',
       baseUrl: 'https://zrhs.honestystore.com',
-      stackName: this.stackName
+      stackName: this.stackName,
+      region: region,
+      accountId: accountId
+    });
+
+    const microservices = [item, store];
+    microservices.forEach(microservice => {
+      microservice.requestAccessToInvokeMicroservices(microservices);
     });
   }
 }
