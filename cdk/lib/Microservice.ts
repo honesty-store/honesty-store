@@ -1,6 +1,7 @@
 import cdk = require('@aws-cdk/core');
 import lambda = require('@aws-cdk/aws-lambda');
 import dynamodb = require('@aws-cdk/aws-dynamodb');
+import { parse as parseUrl } from 'url';
 import { AttributeType, Table } from '@aws-cdk/aws-dynamodb';
 import { LambdaInvokePolicy } from './iam/LambdaInvokePolicy';
 import { MicroserviceRole, MicroserviceRoleProps, MicroserviceRoleTableAccess } from './MicroserviceRole';
@@ -34,7 +35,7 @@ export class Microservice extends cdk.Construct {
   constructor(scope: cdk.Construct, id: string, props: MicroserviceProps, configuration: Configuration) {
     super(scope, id);
 
-    this.functionName = `${configuration.stackName}_${props.hsPackageName}`;
+    this.functionName = this.getFunctionPrefix(configuration.baseUrl) + props.hsPackageName;
     this.region = configuration.region;
     this.accountId = configuration.accountId;
 
@@ -91,4 +92,13 @@ export class Microservice extends cdk.Construct {
   get calculatedFunctionArn(): string {
     return `arn:aws:lambda:${this.region}:${this.accountId}:function:${this.functionName}`;
   }
+
+  private getFunctionPrefix = (baseUrl: string) => {
+    const { hostname } = parseUrl(baseUrl);
+    if (hostname == null) {
+      throw new Error(`Failed to parse ${baseUrl}`);
+    }
+    const branch = hostname.split('.')[0];
+    return branch === 'live' ? 'honesty-store-' : `hs-${branch}-` ;
+  };
 }
