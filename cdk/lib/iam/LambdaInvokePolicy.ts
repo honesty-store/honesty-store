@@ -10,11 +10,12 @@ export class LambdaInvokePolicy extends CustomMangedPolicy {
   constructor(scope: cdk.Construct, id: string, props: LambdaInvokePolicyProps) {
     super(scope, id);
 
-    const managedPolicyLambdaInvokeStatement = new iam.PolicyStatement({
+    const lambdaInvokeStatement = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       resources: props.invokeStatementResources,
       actions: ['lambda:InvokeFunction']
     });
-    this.addStatements(managedPolicyLambdaInvokeStatement);
+
+    this.addStatements(lambdaInvokeStatement);
   }
 }

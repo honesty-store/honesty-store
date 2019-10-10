@@ -27,8 +27,8 @@ interface MicroserviceLambdaEnvironment {
 }
 
 export class Microservice extends cdk.Construct {
-  public functionRole: MicroserviceRole;
   public functionName: string;
+  private functionRole: MicroserviceRole;
   private region: string;
   private accountId: string;
   protected function: lambda.Function;
@@ -81,14 +81,11 @@ export class Microservice extends cdk.Construct {
       functionName: this.functionName
     });
   }
-  public requestAccessToInvokeMicroservices(microservices: Microservice[]) {
-    microservices.forEach(microservice => {
-      const policy = new LambdaInvokePolicy(this.functionRole, `lambda-invoke-${this.functionName}-${microservice.functionName}`, {
-        invokeStatementResources: [microservice.calculatedFunctionArn]
-      });
-      this.functionRole.addManagedPolicy(policy);
-    });
+
+  public addLambdaInvokePolicy(policy: LambdaInvokePolicy) {
+    this.functionRole.addManagedPolicy(policy);
   }
+
   get calculatedFunctionArn(): string {
     return `arn:aws:lambda:${this.region}:${this.accountId}:function:${this.functionName}`;
   }

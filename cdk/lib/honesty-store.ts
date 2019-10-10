@@ -3,6 +3,7 @@ import { Item } from './microservices/Item';
 import { Store } from './microservices/Store';
 import { Transaction } from './microservices/Transaction';
 import { User } from './microservices/User';
+import { grantLambdaInvocationPolicyToMicroservices } from './iam/helpers';
 
 export interface HonestyStoreProps extends cdk.StackProps {
   readonly tableRemovalPolicy: cdk.RemovalPolicy;
@@ -34,8 +35,7 @@ export class HonestyStore extends cdk.Stack {
     const user = new User(this, 'user', {...configuration, userTokenSecret:"user:foo"});
 
     const microservices = [item, store, transaction, user];
-    microservices.forEach(microservice => {
-      microservice.requestAccessToInvokeMicroservices(microservices);
-    });
+
+    grantLambdaInvocationPolicyToMicroservices(this, microservices);
   }
 }
