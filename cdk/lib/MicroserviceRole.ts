@@ -17,35 +17,32 @@ microserviceRoleAccessPolicyMap.set(MicroserviceRoleTableAccess.RW, 'AmazonDynam
 
 export class MicroserviceRole extends iam.Role {
   constructor(scope: cdk.Construct, id: string, props: MicroserviceRoleProps) {
+    const baseRoleName = 'lambda';
     const nameRandomPart = uuid().split('-')[0];
+    const roleProps = {
+      // tslint:disable-next-line: max-line-length
+      roleName: props.tableAccessLevel ? `${baseRoleName}-table-${props.tableAccessLevel}-${nameRandomPart}` : `${baseRoleName}-${nameRandomPart}`,
+      path: '/',
+      maxSessionDuration: cdk.Duration.hours(1),
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com')
+    };
+    super(scope, id, roleProps);
+
     const managedPolicyLambdaInvokeStatement = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       resources: ['*'],
       actions: ['lambda:InvokeFunction']
     });
 
-    const managedPolicyLambdaInvoke = new iam.ManagedPolicy(scope, 'lamba-invoke', {
+    const managedPolicyLambdaInvoke = new iam.ManagedPolicy(this, 'lamba-invoke', {
       managedPolicyName: `lambda-invoke-${nameRandomPart}`,
       statements:  [managedPolicyLambdaInvokeStatement]
     });
 
-    const roleAwsLambdaAndDynamoBase = [
-      managedPolicyLambdaInvoke,
-      iam.ManagedPolicy.fromAwsManagedPolicyName('AWSXrayWriteOnlyAccess'),
-      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole')
-    ];
+    this.addManagedPolicy(managedPolicyLambdaInvoke);
+    this.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AWSXrayWriteOnlyAccess'));
+    this.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'));
 
-    const baseRoleName = 'lambda';
-    const roleProps = {
-      // tslint:disable-next-line: max-line-length
-      roleName: props.tableAccessLevel ? `${baseRoleName}-table-${props.tableAccessLevel}-${nameRandomPart}` : `${baseRoleName}-${nameRandomPart}`,
-      managedPolicies: roleAwsLambdaAndDynamoBase,
-      path: '/',
-      maxSessionDuration: cdk.Duration.hours(1),
-      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com')
-    };
-
-    super(scope, id, roleProps);
     if (props.tableAccessLevel != null) {
       const dynamoAccessPolicy = microserviceRoleAccessPolicyMap.get(props.tableAccessLevel);
       this.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName(dynamoAccessPolicy));
