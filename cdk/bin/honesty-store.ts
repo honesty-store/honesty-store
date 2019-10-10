@@ -4,4 +4,9 @@ import cdk = require('@aws-cdk/core');
 import { HonestyStore } from '../lib/honesty-store';
 
 const app = new cdk.App();
-new HonestyStore(app, 'zr-hs');
+new HonestyStore(app, 'zrhs', {
+    baseUrl: 'https://zrhs.honesty.store',
+    serviceTokenSecret: 'service:foo',
+    slackChannelprefix: '',
+    tableRemovalPolicy: cdk.RemovalPolicy.DESTROY
+});

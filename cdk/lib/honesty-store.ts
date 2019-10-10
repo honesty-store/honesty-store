@@ -4,15 +4,22 @@ import { Store } from './microservices/Store';
 import { Transaction } from './microservices/Transaction';
 import { User } from './microservices/User';
 
+export interface HonestyStoreProps extends cdk.StackProps {
+  readonly tableRemovalPolicy: cdk.RemovalPolicy;
+  readonly serviceTokenSecret: string;
+  readonly slackChannelprefix: string;
+  readonly baseUrl: string;
+}
+
 export class HonestyStore extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: cdk.Construct, id: string, props: HonestyStoreProps) {
     super(scope, id, props);
 
     const configuration = {
-      tableRemovalPolicy: cdk.RemovalPolicy.DESTROY,
-      serviceTokenSecret: 'service:foo',
-      slackChannelPrefix: 'zrhs-',
-      baseUrl: 'https://zrhs.honestystore.com',
+      slackChannelPrefix: props.slackChannelprefix,
+      serviceTokenSecret: props.serviceTokenSecret,
+      baseUrl: props.baseUrl,
+      tableRemovalPolicy: props.tableRemovalPolicy,
       stackName: this.stackName,
       region: this.region,
       accountId: this.account
