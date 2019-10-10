@@ -1,5 +1,6 @@
 import cdk = require('@aws-cdk/core');
 import iam = require('@aws-cdk/aws-iam');
+import { LambdaInvokePolicy } from './iam/LambdaInvokePolicy';
 
 interface MicroserviceRoleProps {
   readonly tableAccessLevel?: MicroserviceRoleTableAccess;
@@ -27,16 +28,7 @@ export class MicroserviceRole extends iam.Role {
     };
     super(scope, id, roleProps);
 
-    const managedPolicyLambdaInvokeStatement = new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      resources: ['*'],
-      actions: ['lambda:InvokeFunction']
-    });
-
-    const managedPolicyLambdaInvoke = new iam.ManagedPolicy(this, 'lamba-invoke', {
-      managedPolicyName: `lambda-invoke-${props.uniqueIdentifier}`,
-      statements:  [managedPolicyLambdaInvokeStatement]
-    });
+    const managedPolicyLambdaInvoke = new LambdaInvokePolicy(this, 'lambda-invoke', {uniqueIdentifier: props.uniqueIdentifier});
 
     this.addManagedPolicy(managedPolicyLambdaInvoke);
     this.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AWSXrayWriteOnlyAccess'));
