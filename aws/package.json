@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "../node_modules/.bin/tsc"
+    "build": "npx tsc"
   },
   "devDependencies": {
     "@types/commander": "^2.3.31",

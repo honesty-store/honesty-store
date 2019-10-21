@@ -5,10 +5,10 @@
   "main": "lib/client/index.js",
   "types": "lib/client/index.d.ts",
   "scripts": {
-    "test": "../node_modules/.bin/jest",
-    "tsc": "../node_modules/.bin/tsc",
-    "rollup": "../node_modules/.bin/rollup -c ../rollup.config.js",
-    "uglifyjs": "../node_modules/uglify-es/bin/uglifyjs lib/bundle.js > lib/bundle-min.js",
+    "test": "npx jest",
+    "tsc": "npx tsc",
+    "rollup": "npx rollup -c ../rollup.config.js",
+    "uglifyjs": "npx uglify-es lib/bundle.js > lib/bundle-min.js",
     "build": "npm run test && npm run tsc && npm run rollup && npm run uglifyjs"
   },
   "dependencies": {

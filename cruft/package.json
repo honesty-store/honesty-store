@@ -24,7 +24,7 @@
     "stop-dynamodb": "docker rm -f dynamodb",
     "test": "jest",
     "build": "npm run tsc && npm run test",
-    "tsc": "../node_modules/.bin/tsc"
+    "tsc": "npx tsc"
   },
   "jest": {
     "transform": {
