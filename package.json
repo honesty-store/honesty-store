@@ -8,7 +8,7 @@
     "tslint": "tslint --config tslint.json -e '**/node_modules/**' -e 'api/test/**' -e '*/lib/**' --format stylish **/*.ts"
   },
   "devDependencies": {
-    "aws-sdk": "2.22.0",
+    "aws-sdk": "2.814.0",
     "builtin-modules": "^1.1.1",
     "commander": "^2.9.0",
     "jest": "^19.0.0",
